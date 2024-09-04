@@ -33,7 +33,8 @@
         "southindia",
         "uksouth",
         "swedencentral",
-        "westus"
+        "westus",
+        "eastus"
       ],
       "metadata": {
         "azd": {
@@ -56,15 +57,15 @@
     },
     "chatGptDeploymentName": {
       "type": "string",
-      "defaultValue": "chat-gpt-35-turbo"
+      "defaultValue": "chat-gpt-4-turbo"
     },
     "chatGptModelName": {
       "type": "string",
-      "defaultValue": "gpt-35-turbo"
+      "defaultValue": "gpt-4"
     },
     "chatGptModelVersion": {
       "type": "string",
-      "defaultValue": "1106"
+      "defaultValue": "turbo-2024-04-09"
     },
     "embeddingDeploymentName": {
       "type": "string",
@@ -312,15 +313,15 @@
             },
             "chatGptDeploymentName": {
               "type": "string",
-              "defaultValue": "chat-gpt-35-turbo"
+              "defaultValue": "chat-gpt-4-turbo"
             },
             "chatGptModelName": {
               "type": "string",
-              "defaultValue": "chat-gpt-35-turbo"
+              "defaultValue": "gpt-4"
             },
             "chatGptModelVersion": {
               "type": "string",
-              "defaultValue": "1106"
+              "defaultValue": "turbo-2024-04-09"
             },
             "embeddingDeploymentName": {
               "type": "string",
