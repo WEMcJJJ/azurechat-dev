@@ -49,7 +49,7 @@
     },
     "openAIApiVersion": {
       "type": "string",
-      "defaultValue": "2024-02-01"
+      "defaultValue": "2024-07-01-preview"
     },
     "chatGptDeploymentCapacity": {
       "type": "int",
@@ -57,7 +57,7 @@
     },
     "chatGptDeploymentName": {
       "type": "string",
-      "defaultValue": "chat-gpt-4-turbo"
+      "defaultValue": "chat-gpt-4o"
     },
     "chatGptModelName": {
       "type": "string",
@@ -65,7 +65,7 @@
     },
     "chatGptModelVersion": {
       "type": "string",
-      "defaultValue": "turbo-2024-04-09"
+      "defaultValue": "2024-08-06"
     },
     "embeddingDeploymentName": {
       "type": "string",
@@ -104,7 +104,7 @@
     },
     "dalleApiVersion": {
       "type": "string",
-      "defaultValue": "2024-02-01"
+      "defaultValue": "2024-07-01-preview"
     },
     "gptvisionLocation": {
       "type": "string",
@@ -130,7 +130,7 @@
     },
     "gptvisionApiVersion": {
       "type": "string",
-      "defaultValue": "2024-02-01"
+      "defaultValue": "2024-07-01-preview"
     },
     "gptvisionModelVersion": {
       "type": "string",
@@ -313,7 +313,7 @@
             },
             "chatGptDeploymentName": {
               "type": "string",
-              "defaultValue": "chat-gpt-4-turbo"
+              "defaultValue": "chat-gpt-4o"
             },
             "chatGptModelName": {
               "type": "string",
@@ -321,7 +321,7 @@
             },
             "chatGptModelVersion": {
               "type": "string",
-              "defaultValue": "turbo-2024-04-09"
+              "defaultValue": "2024-08-06"
             },
             "embeddingDeploymentName": {
               "type": "string",
@@ -367,7 +367,7 @@
             },
             "gptvisionApiVersion": {
               "type": "string",
-              "defaultValue": "2024-02-01"
+              "defaultValue": "2024-07-01-preview"
             },
             "gptvisionModelVersion": {
               "type": "string",
