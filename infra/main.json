@@ -61,7 +61,7 @@
     },
     "chatGptModelName": {
       "type": "string",
-      "defaultValue": "gpt-4"
+      "defaultValue": "gpt-4o"
     },
     "chatGptModelVersion": {
       "type": "string",
@@ -317,7 +317,7 @@
             },
             "chatGptModelName": {
               "type": "string",
-              "defaultValue": "gpt-4"
+              "defaultValue": "gpt-4o"
             },
             "chatGptModelVersion": {
               "type": "string",
