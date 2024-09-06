@@ -11,7 +11,7 @@ param location string
 
 // azure open ai -- only regions supporting gpt-35-turbo v1106
 @description('Location for the OpenAI resource group')
-@allowed(['australiaeast', 'canadaeast', 'francecentral', 'southindia', 'uksouth', 'swedencentral', 'westus','eastus'])
+@allowed(['australiaeast', 'canadaeast', 'francecentral', 'southindia', 'uksouth', 'swedencentral', 'westus', 'eastus'])
 @metadata({
   azd: {
     type: 'location'
@@ -20,12 +20,12 @@ param location string
 param openAILocation string
 
 param openAISku string = 'S0'
-param openAIApiVersion string = '2024-07-01-preview'
+param openAIApiVersion string ='2024-05-13'
 
-param chatGptDeploymentCapacity int = 120
-param chatGptDeploymentName string = 'chat-gpt-4o'
-param chatGptModelName string = 'gpt-4'
-param chatGptModelVersion string = '2024-08-06'
+param chatGptDeploymentCapacity int = 30
+param chatGptDeploymentName string = 'gpt-4o'
+param chatGptModelName string = 'gpt-4o'
+param chatGptModelVersion string = '2024-05-13'
 param embeddingDeploymentName string = 'embedding'
 param embeddingDeploymentCapacity int = 120
 param embeddingModelName string = 'text-embedding-ada-002'
@@ -38,18 +38,7 @@ param dalleLocation string
 param dalleDeploymentCapacity int = 1
 param dalleDeploymentName string = 'dall-e-3'
 param dalleModelName string = 'dall-e-3'
-param dalleApiVersion string = '2024-07-01-preview'
-
-// DALL-E v3 only supported in Sweden Central for now
-@description('Location for the GPT vision instance resource')
-@allowed(['australiaeast','swedencentral','westus',])
-param gptvisionLocation string
-
-param gptvisionDeploymentCapacity int = 1
-param gptvisionDeploymentName string = 'gpt-4-vision'
-param gptvisionModelName string = 'gpt-4'
-param gptvisionApiVersion string = '2024-07-01-preview'
-param gptvisionModelVersion string = 'vision-preview'
+param dalleApiVersion string = '2023-12-01-preview'
 
 param formRecognizerSkuName string = 'S0'
 param searchServiceIndexName string = 'azure-chat'
@@ -93,12 +82,6 @@ module resources 'resources.bicep' = {
     dalleDeploymentName: dalleDeploymentName
     dalleModelName: dalleModelName
     dalleApiVersion: dalleApiVersion
-    gptvisionLocation: gptvisionLocation
-    gptvisionApiVersion: gptvisionApiVersion
-    gptvisionDeploymentCapacity: gptvisionDeploymentCapacity
-    gptvisionDeploymentName: gptvisionDeploymentName
-    gptvisionModelName: gptvisionModelName
-    gptvisionModelVersion: gptvisionModelVersion
     formRecognizerSkuName: formRecognizerSkuName
     searchServiceIndexName: searchServiceIndexName
     searchServiceSkuName: searchServiceSkuName
