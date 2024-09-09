@@ -34,7 +34,8 @@
         "uksouth",
         "swedencentral",
         "westus",
-        "eastus"
+        "eastus",
+        "eastus2"
       ],
       "metadata": {
         "azd": {

@@ -69,6 +69,7 @@ const configureIdentityProvider = () => {
         async profile(profile) {
           const newProfile = {
             ...profile,
+            id: profile.sub,
             isAdmin: adminEmails?.includes(profile.email.toLowerCase()),
           };
           return newProfile;
