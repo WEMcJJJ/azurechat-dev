@@ -22,9 +22,7 @@ jobs:
         uses: azure/CLI@v2
         with:
           azcliversion: latest
-          inlineScript: |
-            az config set bicep.use_binary_from_path=false
-            az bicep build -f infra/main.bicep --stdout
+          inlineScript: az config set bicep.use_binary_from_path=false && az bicep build -f infra/main.bicep --stdout
 
       - name: Run Microsoft Security DevOps Analysis
         uses: microsoft/security-devops-action@latest
