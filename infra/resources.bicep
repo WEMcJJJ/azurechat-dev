@@ -45,8 +45,9 @@ var cosmos_name = toLower('${name}-cosmos-${resourceToken}')
 var search_name = toLower('${name}search${resourceToken}')
 var webapp_name = toLower('${name}-webapp-${resourceToken}')
 var appservice_name = toLower('${name}-app-${resourceToken}')
-// storage name must be less than 24 chars, alphanumeric only - token is 13
-var storage_prefix = take(name, 8)
+// storage name must be < 24 chars, alphanumeric only. 'sto' is 3 and resourceToken is 13
+var clean_name = replace(replace(name, '-', ''), '_', '')
+var storage_prefix = take(clean_name, 8)
 var storage_name = toLower('${storage_prefix}sto${resourceToken}')
 // keyvault name must be less than 24 chars - token is 13
 var kv_prefix = take(name, 7)
@@ -113,7 +114,7 @@ resource webApp 'Microsoft.Web/sites@2020-06-01' = {
     siteConfig: {
       linuxFxVersion: 'node|18-lts'
       alwaysOn: true
-      appCommandLine: 'next start'
+      appCommandLine: 'node .next/standalone/server.js'
       ftpsState: 'Disabled'
       minTlsVersion: '1.2'
       appSettings: [ 
