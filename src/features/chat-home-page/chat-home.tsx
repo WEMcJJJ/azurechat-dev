@@ -35,43 +35,13 @@ export const ChatHome: FC<ChatPersonaProps> = (props) => {
         ></Hero>
         <div className="container max-w-4xl flex gap-20 flex-col">
           <div>
-            <h2 className="text-2xl font-bold mb-3">Extensions</h2>
-
-            {props.extensions && props.extensions.length > 0 ? (
-              <div className="grid grid-cols-3 gap-3">
-                {props.extensions.map((extension) => {
-                  return (
-                    <ExtensionCard
-                      extension={extension}
-                      key={extension.id}
-                      showContextMenu={false}
-                    />
-                  );
-                })}
-              </div>
-            ) :
-              <p className="text-muted-foreground max-w-xl">No extentions created</p>
-            }
-
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold mb-3">Personas</h2>
-
-            {props.personas && props.personas.length > 0 ? (
-              <div className="grid grid-cols-3 gap-3">
-                {props.personas.map((persona) => {
-                  return (
-                    <PersonaCard
-                      persona={persona}
-                      key={persona.id}
-                      showContextMenu={false}
-                    />
-                  );
-                })}
-              </div>
-            ) :
-              <p className="text-muted-foreground max-w-xl">No personas created</p>
-            }
+            <h2 className="text-2xl font-bold mb-3">Welcome to WestEd Secure AI</h2>
+            <p className="text-muted-foreground max-w-xl">Click the '+ New Chat' button in the top left to start a new chat.</p>
+            <br></br>
+            <p className="text-muted-foreground max-w-xl">If you don't see the '+ New Chat' button, you might have to toggle the menu by clicking the following icon:
+              <br></br>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-panel-left-close transition-all rotate-180"><rect width="18" height="18" x="3" y="3" rx="2"></rect><path d="M9 3v18"></path><path d="m16 15-3-3 3-3"></path></svg>
+              </p>
           </div>
         </div>
         <AddExtension />
