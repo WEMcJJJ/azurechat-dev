@@ -38,10 +38,8 @@ export const ChatHome: FC<ChatPersonaProps> = (props) => {
             <h2 className="text-2xl font-bold mb-3">Welcome to WestEd Secure AI</h2>
             <p className="text-muted-foreground max-w-xl">Click the '+ New Chat' button in the top left to start a new chat.</p>
             <br></br>
-            <p className="text-muted-foreground max-w-xl">If you don't see the '+ New Chat' button, you might have to toggle the menu by clicking the following icon:
-              <br></br>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-panel-left-close transition-all rotate-180"><rect width="18" height="18" x="3" y="3" rx="2"></rect><path d="M9 3v18"></path><path d="m16 15-3-3 3-3"></path></svg>
-              </p>
+            <p className="text-muted-foreground max-w-xl">If you don't see the '+ New Chat' button, you might have to toggle the menu by clicking the following icon:</p>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="rotate(180)"><rect width="18" height="18" x="3" y="3" rx="2"></rect><path d="M9 3v18"></path><path d="m16 15-3-3 3-3"></path></svg>
           </div>
         </div>
         <AddExtension />
