@@ -82,7 +82,7 @@ export const ChatInput = () => {
               fileStore.onFileChange({ formData, chatThreadId })
             }
           />
-          <PromptSlider />
+          {/* <PromptSlider />*/}
         </ChatInputSecondaryActionArea>
         <ChatInputPrimaryActionArea>
           <ImageInput />
