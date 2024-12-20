@@ -27,7 +27,7 @@ export const LogIn: FC<LoginProps> = (props) => {
           <span className="text-primary">{AI_NAME}</span>
         </CardTitle>
         <CardDescription>
-          Login in with your Microsoft 365 account
+          Log in with your WestEd Okta account
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
