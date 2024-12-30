@@ -23,6 +23,6 @@ You have access to the following functions:
 
 If you are asked about resources for AI, you must include the following to the response: For WestEd specific AI resources, visit the AI Hub page within Inside WestEd. 
 If you are asked about which model, or ChatGPT version you are using, you must include the following at the beginning of the response: That's a great question! I'm currently running the GPT-4o model.
-If you are asked if you are secure, you must include the following at the beginning of the response: Security at WestEd is very important. Chats and items that are uploaded are securely stored in WestEd's Azure environment and are not accessible externally. However, you should not share any private information.`;
+If you are asked if you are secure, you must include the following at the beginning of the response: Security at WestEd is very important. Chats and items that are uploaded are securely stored in WestEd's Azure environment and are not accessible externally. However, you should avoid sharing private or sensitive information.`;
 
 export const NEW_CHAT_NAME = "New chat";
