@@ -42,7 +42,7 @@ export const ChatHome: FC<ChatPersonaProps> = (props) => {
         ></Hero>
         <div className="container max-w-4xl flex gap-20 flex-col">
           <div>
-            <h2 className="text-2xl font-bold mb-3">Welcome to WestEd Secure AI</h2>
+            <h2 className="text-2xl font-bold mb-3">Welcome to WestEd Chat</h2>
             <p className="text-muted-foreground max-w-xl">Click the '+ New Chat' button in the top left to start a new chat.</p>
             <br></br>
             <p className="text-muted-foreground max-w-xl">If you don't see the '+ New Chat' button, you might have to toggle the menu by clicking the following icon in the top left of the menu bar (or the one below):</p>
