@@ -47,6 +47,10 @@ export const ChatHome: FC<ChatPersonaProps> = (props) => {
             <br></br>
             <p className="text-muted-foreground max-w-xl">If you don't see the '+ New Chat' button, you might have to toggle the menu by clicking the following icon in the top left of the menu bar (or the one below):</p>
             <MenuTrayToggle />
+            <br></br>
+            <p className="text-muted-foreground max-w-xl">For additional information about how to use WestEd Chat, see the <a target="_blank" className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600" href="https://westedintranet--simpplr.vf.force.com/apex/simpplr__app?u=/site/a076T00001hzhWtQAI/page/a01VO000005h6YjYAI">WestEd AI article</a> on Inside WestEd.</p>
+            <br></br>
+            <p className="text-muted-foreground max-w-xl">To learn more about AI at WestEd, visit the <a target="_blank" className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600" href="https://westedintranet--simpplr.vf.force.com/apex/simpplr__app?u=/site/a076T00001hzhWtQAI/dashboard">AI Hub</a> on Inside WestEd.</p>
           </div>
 
           {session?.user?.isAdmin && (
