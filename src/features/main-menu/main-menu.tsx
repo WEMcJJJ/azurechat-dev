@@ -33,24 +33,17 @@ export const MainMenu = async () => {
           <MenuTrayToggle />
         </MenuItemContainer>
         <MenuItemContainer>
-        {user.isAdmin && (
-          <>
           <MenuItem tooltip="Chat">
             <MenuLink href="/chat" ariaLabel="Go to the Chat page">
               <MessageCircle {...menuIconProps} />
             </MenuLink>
           </MenuItem>
-          </>
-          )}
-          {user.isAdmin && (
-            <>
+
           <MenuItem tooltip="Persona">
             <MenuLink href="/persona" ariaLabel="Go to the Persona configuration page">
               <VenetianMask {...menuIconProps} />
             </MenuLink>
           </MenuItem>
-          </>
-          )}
           {user.isAdmin && (
             <>
           <MenuItem tooltip="extensions">
