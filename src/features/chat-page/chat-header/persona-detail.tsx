@@ -1,4 +1,4 @@
-import { CHAT_DEFAULT_SYSTEM_PROMPT } from "@/features/theme/theme-config";
+import { CHAT_DEFAULT_SYSTEM_PROMPT_TEXT } from "@/features/theme/theme-config";
 import { Button } from "@/features/ui/button";
 import { Label } from "@/features/ui/label";
 import { ScrollArea } from "@/features/ui/scroll-area";
@@ -40,7 +40,7 @@ export const PersonaDetail: FC<Props> = (props) => {
 
             <div className="grid gap-2 flex-1 ">
               <Label htmlFor="personaMessage">Personality</Label>
-              <div className="whitespace-pre-wrap">{`${CHAT_DEFAULT_SYSTEM_PROMPT}`}</div>
+              <div className="whitespace-pre-wrap">{`${CHAT_DEFAULT_SYSTEM_PROMPT_TEXT}`}</div>
               <div className="whitespace-pre-wrap">{`${personaMessage}`}</div>
             </div>
           </div>
