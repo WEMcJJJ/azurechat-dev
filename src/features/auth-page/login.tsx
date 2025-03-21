@@ -27,15 +27,16 @@ export const LogIn: FC<LoginProps> = (props) => {
           <span className="text-primary">{AI_NAME}</span>
         </CardTitle>
         <CardDescription>
-          Login in with your Microsoft Entra ID account
+        Log in with your WestEd Okta account
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
-        <Button onClick={() => signIn("azure-ad")}> Microsoft Entra</Button>
+        <Button onClick={() => signIn("okta")}> Okta</Button>
         {props.isDevMode ? (
-          <Button onClick={() => signIn("localdev")}>
+            <><Button onClick={() => signIn("azure-ad")}> Microsoft Entra</Button>
+            <Button onClick={() => signIn("localdev")}>
             Basic Auth (DEV ONLY)
-          </Button>
+          </Button></>
         ) : null}
       </CardContent>
     </Card>

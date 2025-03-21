@@ -140,6 +140,7 @@ export const ChatAPIEntry = async (props: UserPrompt, signal: AbortSignal) => {
     headers: {
       "Cache-Control": "no-cache",
       Connection: "keep-alive",
+      "Content-Type": "text/event-stream"
     },
   });
 };

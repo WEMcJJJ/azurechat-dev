@@ -13,6 +13,7 @@ import { NewsArticle } from "./news-article";
 import { Button } from "../ui/button";
 import { ExternalLink, House, Logs } from "lucide-react";
 import { Changelog } from "./changelog";
+import { MenuTrayToggle } from "@/features/main-menu/menu-tray-toggle";
 
 interface ChatPersonaProps {
   personas: PersonaModel[];
@@ -137,6 +138,20 @@ export const ChatHome: FC<ChatPersonaProps> = ({ personas, news }) => {
           }
           description={AI_DESCRIPTION}
         />
+        <div className="container max-w-4xl flex gap-20 flex-col">
+        <div>
+            <h2 className="text-2xl font-bold mb-3">Welcome to WestEd Chat</h2>
+            <p className="text-muted-foreground max-w-xl">Click the '+ New Chat' button in the top left to start a new chat.</p>
+            <br></br>
+            <p className="text-muted-foreground max-w-xl">If you don't see the '+ New Chat' button, you might have to toggle the menu by clicking the following icon in the top left of the menu bar (or the one below):</p>
+            <MenuTrayToggle />
+            <br></br>
+            <p className="text-muted-foreground max-w-xl">For additional information about how to use WestEd Chat, see the <a target="_blank" className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600" href="https://westedintranet--simpplr.vf.force.com/apex/simpplr__app?u=/site/a076T00001hzhWtQAI/page/a01VO000005h6YjYAI">WestEd AI article</a> on Inside WestEd.</p>
+            <br></br>
+            <p className="text-muted-foreground max-w-xl">To learn more about AI at WestEd, visit the <a target="_blank" className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600" href="https://westedintranet--simpplr.vf.force.com/apex/simpplr__app?u=/site/a076T00001hzhWtQAI/dashboard">AI Hub</a> on Inside WestEd.</p>
+          </div>
+        </div>
+
         <div className="container max-w-4xl flex gap-20 flex-col">
           {showChangelog ? (
             <ChangelogSection setShowChangelog={setShowChangelog} />

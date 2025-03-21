@@ -2,6 +2,7 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 import AzureADProvider from "next-auth/providers/azure-ad";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
+import OktaProvider from "next-auth/providers/okta";
 import { Provider } from "next-auth/providers/index";
 import { hashValue } from "./helpers";
 
@@ -51,14 +52,16 @@ const configureIdentityProvider = () => {
             headers: { Authorization: `Bearer ${tokens.access_token}` },
           });
 
+          const email = profile.email || profile.preferred_username || "";
           const baseProfile = {
             ...profile,
+            email,
+            // throws error without this - unsure of the root cause (https://stackoverflow.com/questions/76244244/profile-id-is-missing-in-google-oauth-profile-response-nextauth)
             id: profile.sub,
-            email: profile.email,
             accessToken: tokens.access_token,
             isAdmin:
-              adminEmails?.includes(profile.email.toLowerCase()) ||
-              adminEmails?.includes(profile.preferred_username.toLowerCase()),
+              adminEmails?.includes(profile.email?.toLowerCase()) ||
+              adminEmails?.includes(profile.preferred_username?.toLowerCase()),
           };
 
           if (profilePicture.ok) {
@@ -76,6 +79,34 @@ const configureIdentityProvider = () => {
     );
   }
 
+  if (
+    process.env.OKTA_CLIENT_ID &&
+    process.env.OKTA_CLIENT_SECRET &&
+    process.env.OKTA_ISSUER
+  ) {
+    providers.push(
+      OktaProvider({
+        clientId: process.env.OKTA_CLIENT_ID!,
+        clientSecret: process.env.OKTA_CLIENT_SECRET!,
+        issuer: process.env.OKTA_ISSUER!,
+        async profile(profile, tokens) {
+          const newProfile = {
+            ...profile,
+            id: profile.sub,
+            email: profile.email,
+            accessToken: tokens.access_token,
+            isAdmin: adminEmails?.includes(profile.email.toLowerCase()),
+          };
+          return newProfile;
+        },
+      })
+    );
+  }
+
+  // If we're in local dev, add a basic credential provider option as well
+  // (Useful when a dev doesn't have access to create app registration in their tenant)
+  // This currently takes any username and makes a user with it, ignores password
+  // Refer to: https://next-auth.js.org/configuration/providers/credentials
   if (process.env.NODE_ENV === "development") {
     providers.push(
       CredentialsProvider({

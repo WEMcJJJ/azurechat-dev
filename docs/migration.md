@@ -1,4 +1,8 @@
-# Migration
+# Migration 2.1
+
+The new changes merges GPT-4 and GPT-4 Vision models into a single GPT-4o model. This allows multi-modal inputs and generates text as an output. The new model is available within the following [regions](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models#gpt-4-and-gpt-4-turbo-preview-model-availability).
+
+# Migration 2.0
 
 The following changes and services are required to migrate from the old version to the new version.
 
@@ -44,7 +48,7 @@ Once the model is deployed successfully, update the environment variables in the
 AZURE_OPENAI_VISION_API_KEY=333333
 AZURE_OPENAI_VISION_API_INSTANCE_NAME=azurechat-vision
 AZURE_OPENAI_VISION_API_DEPLOYMENT_NAME=gpt-4-vision
-AZURE_OPENAI_VISION_API_VERSION=2023-12-01-preview
+AZURE_OPENAI_VISION_API_VERSION=2024-07-01-preview
 ```
 
 ## Existing Azure services
