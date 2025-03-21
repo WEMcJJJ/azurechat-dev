@@ -15,9 +15,9 @@
 
 ## [v2.0.0] – 2024-06-13
 
-- Added: Re-worked UI with a modern Bühler-themed design, including a clean layout and Bühler colors.
+- Added: Re-worked UI with a modern design, including a clean layout and new colors.
 - Added: Sidebar now displays past chats and allows bookmarking important chats.
-- Added: Main start page contains a news and best practices article section for Bühler Chat and a lower section showcasing personas.
+- Added: Main start page contains a news and best practices article section for WestEd Chat and a lower section showcasing personas.
 - Added: Support for Personas, which are user-guided AI assistants tailored via specific prompts.
 - Added: Ability to share personas via a link.
 - Added: Integration of DALL·E 3 for image creation based on text descriptions, with automatic handling of prompts for generating images.

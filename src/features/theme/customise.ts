@@ -1,1 +1,1 @@
-export const AI_NAME = "Bühler ChatGPT";
+export const AI_NAME = "WestEd Chat";

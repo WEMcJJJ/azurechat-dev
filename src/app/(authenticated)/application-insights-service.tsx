@@ -53,7 +53,7 @@ function initializeTelemetry(instrumentationKey: string, session: SessionContext
     env.tags = env.tags || {};
     env.data = env.data || {};
     if (env.tags) {
-      env.tags["ai.cloud.role"] = "Bühler ChatGPT";
+      env.tags["ai.cloud.role"] = "WestEd Chat";
     }
     if (env.data) {
       env.data["email"] = session?.data?.user?.email;
