@@ -6,7 +6,6 @@ import {
   userHashedId,
   userSession,
 } from "@/features/auth-page/helpers";
-import { RedirectToChatThread } from "@/features/common/navigation-helpers";
 import { ServerActionResponse } from "@/features/common/server-action-response";
 import { uniqueId } from "@/features/common/util";
 import {
@@ -15,7 +14,7 @@ import {
 } from "@/features/theme/theme-config";
 import { SqlQuerySpec } from "@azure/cosmos";
 import { HistoryContainer } from "../../common/services/cosmos";
-import { DeleteDocuments } from "./azure-ai-search/azure-ai-search";
+import { DeleteDocumentsOfChatThread } from "./azure-ai-search/azure-ai-search";
 import { FindAllChatDocuments } from "./chat-document-service";
 import { FindAllChatMessagesForCurrentUser } from "./chat-message-service";
 import {
@@ -23,6 +22,8 @@ import {
   ChatDocumentModel,
   ChatThreadModel,
 } from "./models";
+import { redirect } from "next/navigation";
+import { ChatApiText } from "./chat-api/chat-api-text";
 
 export const FindAllChatThreadForCurrentUser = async (): Promise<
   ServerActionResponse<Array<ChatThreadModel>>
@@ -147,7 +148,7 @@ export const SoftDeleteChatThreadForCurrentUser = async (
       const chatDocuments = chatDocumentsResponse.response;
 
       if (chatDocuments.length !== 0) {
-        await DeleteDocuments(chatThreadID);
+        await DeleteDocumentsOfChatThread(chatThreadID);
       }
 
       chatDocuments.forEach(async (chatDocument: ChatDocumentModel) => {
@@ -163,6 +164,42 @@ export const SoftDeleteChatThreadForCurrentUser = async (
     }
 
     return chatThreadResponse;
+  } catch (error) {
+    return {
+      status: "ERROR",
+      errors: [{ message: `${error}` }],
+    };
+  }
+};
+
+export const SoftDeleteChatDocumentsForCurrentUser = async (
+  chatThreadId: string
+): Promise<ServerActionResponse> => {
+  try {
+    const chatDocumentsResponse = await FindAllChatDocuments(chatThreadId);
+
+    if (chatDocumentsResponse.status !== "OK") {
+      return chatDocumentsResponse;
+    }
+
+    const chatDocuments = chatDocumentsResponse.response;
+
+    if (chatDocuments.length !== 0) {
+      await DeleteDocumentsOfChatThread(chatThreadId);
+    }
+
+    chatDocuments.forEach(async (chatDocument: ChatDocumentModel) => {
+      const itemToUpdate = {
+        ...chatDocument,
+      };
+      itemToUpdate.isDeleted = true;
+      await HistoryContainer().items.upsert(itemToUpdate);
+    });
+
+    return {
+      status: "OK",
+      response: "OK",
+    };
   } catch (error) {
     return {
       status: "ERROR",
@@ -315,14 +352,21 @@ export const CreateChatThread = async (): Promise<
 
 export const UpdateChatTitle = async (
   chatThreadId: string,
-  title: string
+  prompt: string
 ): Promise<ServerActionResponse<ChatThreadModel>> => {
   try {
     const response = await FindChatThreadForCurrentUser(chatThreadId);
+    const shorterPrompt = prompt.slice(0, 300);
     if (response.status === "OK") {
       const chatThread = response.response;
-      // take the first 30 characters
-      chatThread.name = title.substring(0, 30);
+      const systemPrompt = `- you will generate a short title based on the first message a user begins a conversation with
+                            - ensure it is not more than 40 characters long
+                            - the title should be a summary or keywords of the user's message
+                            - do not use quotes or colons
+                            USERPROMPT: ${shorterPrompt}`;
+
+      chatThread.name = await ChatApiText(systemPrompt);
+
       return await UpsertChatThread(chatThread);
     }
     return response;
@@ -337,6 +381,6 @@ export const UpdateChatTitle = async (
 export const CreateChatAndRedirect = async () => {
   const response = await CreateChatThread();
   if (response.status === "OK") {
-    RedirectToChatThread(response.response.id);
+    redirect(`/chat/${response.response.id}`);
   }
 };

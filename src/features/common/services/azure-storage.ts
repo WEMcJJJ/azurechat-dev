@@ -28,10 +28,13 @@ export const UploadBlob = async (
   const containerClient = blobServiceClient.getContainerClient(containerName);
   const blockBlobClient = containerClient.getBlockBlobClient(blobName);
 
+  try{
+    
   const response = await blockBlobClient.uploadData(blobData);
 
   // Check for upload success
   if (response.errorCode !== undefined) {
+    console.error(response);
     return {
       status: "ERROR",
       errors: [
@@ -41,10 +44,18 @@ export const UploadBlob = async (
       ],
     };
   }
+
+  console.log("Upload of generated image was successfull");
+
   return {
     status: "OK",
     response: blockBlobClient.url,
   };
+  
+  } catch (error){
+    console.error(error);
+    throw error;
+  }
 };
 
 export const GetBlob = async (

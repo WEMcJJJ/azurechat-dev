@@ -11,7 +11,7 @@ import {
   ServerActionResponse,
   zodErrorsToServerActionErrors,
 } from "@/features/common/server-action-response";
-import { HistoryContainer } from "@/features/common/services/cosmos";
+import { ConfigContainer } from "@/features/common/services/cosmos";
 import { uniqueId } from "@/features/common/util";
 import { SqlQuerySpec } from "@azure/cosmos";
 import { PERSONA_ATTRIBUTE, PersonaModel, PersonaModelSchema } from "./models";
@@ -21,6 +21,7 @@ interface PersonaInput {
   description: string;
   personaMessage: string;
   isPublished: boolean;
+  extensionIds: string[];
 }
 
 export const FindPersonaByID = async (
@@ -41,7 +42,7 @@ export const FindPersonaByID = async (
       ],
     };
 
-    const { resources } = await HistoryContainer()
+    const { resources } = await ConfigContainer()
       .items.query<PersonaModel>(querySpec)
       .fetchAll();
 
@@ -86,6 +87,7 @@ export const CreatePersona = async (
       isPublished: user.isAdmin ? props.isPublished : false,
       userId: await userHashedId(),
       createdAt: new Date(),
+      extensionIds: props.extensionIds,
       type: "PERSONA",
     };
 
@@ -95,7 +97,7 @@ export const CreatePersona = async (
       return valid;
     }
 
-    const { resource } = await HistoryContainer().items.create<PersonaModel>(
+    const { resource } = await ConfigContainer().items.create<PersonaModel>(
       modelToSave
     );
 
@@ -156,7 +158,7 @@ export const DeletePersona = async (
     const personaResponse = await EnsurePersonaOperation(personaId);
 
     if (personaResponse.status === "OK") {
-      const { resource: deletedPersona } = await HistoryContainer()
+      const { resource: deletedPersona } = await ConfigContainer()
         .item(personaId, personaResponse.response.userId)
         .delete();
 
@@ -198,6 +200,7 @@ export const UpsertPersona = async (
           ? personaInput.isPublished
           : persona.isPublished,
         createdAt: new Date(),
+        extensionIds: personaInput.extensionIds
       };
 
       const validationResponse = ValidateSchema(modelToUpdate);
@@ -205,7 +208,7 @@ export const UpsertPersona = async (
         return validationResponse;
       }
 
-      const { resource } = await HistoryContainer().items.upsert<PersonaModel>(
+      const { resource } = await ConfigContainer().items.upsert<PersonaModel>(
         modelToUpdate
       );
 
@@ -262,7 +265,7 @@ export const FindAllPersonaForCurrentUser = async (): Promise<
       ],
     };
 
-    const { resources } = await HistoryContainer()
+    const { resources } = await ConfigContainer()
       .items.query<PersonaModel>(querySpec)
       .fetchAll();
 
@@ -303,7 +306,7 @@ export const CreatePersonaChat = async (
       type: CHAT_THREAD_ATTRIBUTE,
       personaMessage: persona.personaMessage,
       personaMessageTitle: persona.name,
-      extension: [],
+      extension: persona.extensionIds || [],
     });
 
     return response;
