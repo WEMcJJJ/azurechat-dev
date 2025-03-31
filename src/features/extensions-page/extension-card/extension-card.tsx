@@ -17,7 +17,7 @@ import { StartNewExtensionChat } from "./start-new-extension-chat";
 
 interface Props {
   extension: ExtensionModel;
-  showContextMenu: boolean;
+  showActionMenu: boolean
 }
 
 export const ExtensionCard: FC<Props> = (props) => {
@@ -26,17 +26,21 @@ export const ExtensionCard: FC<Props> = (props) => {
     <Card key={extension.id} className="flex flex-col">
       <CardHeader className="flex flex-row">
         <CardTitle className="flex-1">{extension.name}</CardTitle>
-        {props.showContextMenu && (
+        {props.showActionMenu && (
           <div>
             <ExtensionCardContextMenu extension={extension} />
           </div>
         )}
       </CardHeader>
       <CardContent className="text-muted-foreground flex-1">
+        {extension.isPublished
+          ? <div className="text-green-500 w-full flex justify-left">Published</div>
+          : <div className="text-red-500 w-full flex justify-left">Unpublished</div>
+        }<br></br>
         {extension.description}
       </CardContent>
       <CardFooter className="gap-1 content-stretch f">
-        {props.showContextMenu && (
+        {props.showActionMenu && (
           <Button
             variant={"outline"}
             title="Show message"

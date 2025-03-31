@@ -33,7 +33,7 @@ export const GetDefaultExtensions = async (props: {
         },
       },
       description:
-        "You must only use this tool if the user asks you to create an image. You must only use this tool once per message.",
+        "You must only use this tool if the user asks you to create an image. You must only use this tool once per message. Images must be displaye inline.",
       name: "create_img",
     },
   });
@@ -109,7 +109,7 @@ async function executeCreateImage(
 
     const updated_response = {
       revised_prompt: response.data[0].revised_prompt,
-      url: GetImageUrl(threadId, imageName),
+      url: await GetImageUrl(threadId, imageName),
     };
 
     return updated_response;

@@ -11,6 +11,8 @@ import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import { SimilaritySearch } from "../azure-ai-search/azure-ai-search";
 import { CreateCitations, FormatCitations } from "../citation-service";
 import { ChatCitationModel, ChatThreadModel } from "../models";
+import { reportPromptTokens } from "@/features/common/services/chat-metrics-service";
+import { ChatTokenService } from "@/features/common/services/chat-token-service";
 
 export const ChatApiRAG = async (props: {
   chatThread: ChatThreadModel;
@@ -51,7 +53,7 @@ export const ChatApiRAG = async (props: {
   // Augment the user prompt
   const _userMessage = `\n
 - Review the following content from documents uploaded by the user and create a final answer.
-- If you don't know the answer, just say that you don't know. Don't try to make up an answer.
+- If you don't know the answer, state that you don't know and still try to address the question as best as possible.
 - You must always include a citation at the end of your answer and don't include full stop after the citations.
 - Use the format for your citation {% citation items=[{name:"filename 1",id:"file id"}, {name:"filename 2",id:"file id"}] /%}
 ----------------
@@ -76,8 +78,16 @@ ${userMessage}
         role: "user",
         content: _userMessage,
       },
-    ],
+    ]
   };
+
+  let chatTokenService = new ChatTokenService();
+
+  let promptTokens = chatTokenService.getTokenCountFromHistory(stream.messages);
+
+  for (let tokens of promptTokens) {
+    reportPromptTokens(tokens.tokens, "gpt-4", tokens.role, { personaMessageTitle: chatThread.personaMessageTitle, messageCount: stream.messages.length, threadId: chatThread.id });
+  }
 
   return openAI.beta.chat.completions.stream(stream, { signal });
 };

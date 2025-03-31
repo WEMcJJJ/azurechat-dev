@@ -1,4 +1,6 @@
 "use client";
+import { Alert, AlertDescription, AlertTitle } from "@/features/ui/alert";
+import { AlertCircle } from "lucide-react";
 import { ChatInput } from "@/features/chat-page/chat-input/chat-input";
 import { chatStore, useChat } from "@/features/chat-page/chat-store";
 import { ChatLoading } from "@/features/ui/chat/chat-message-area/chat-loading";
@@ -39,15 +41,30 @@ export const ChatPage: FC<ChatPageProps> = (props) => {
 
   const current = useRef<HTMLDivElement>(null);
 
+  const maxMessages = 30;
+
   useChatScrollAnchor({ ref: current });
 
   return (
-    <main className="flex flex-1 relative flex-col pl-5">
+    <main className="flex flex-1 relative flex-col px-3">
       <ChatHeader
         chatThread={props.chatThread}
         chatDocuments={props.chatDocuments}
         extensions={props.extensions}
       />
+
+      {messages.length > maxMessages && (
+        <Alert className="text-x bg-primary bg-orange-400">
+          <AlertCircle size={20} />
+          <AlertTitle>Warning: Too Many Messages</AlertTitle>
+          <AlertDescription className="text">
+            This chat has more than {maxMessages} messages. Long chats cost more
+            money because the whole context with all messages is sent to the LLM
+            when clicking on submit. Please open a new chat whenever the context
+            or topic switches.
+          </AlertDescription>
+        </Alert>
+      )}
       <ChatMessageContainer ref={current}>
         <ChatMessageContentArea>
           {messages.map((message) => {
@@ -59,11 +76,7 @@ export const ChatPage: FC<ChatPageProps> = (props) => {
                 onCopy={() => {
                   navigator.clipboard.writeText(message.content);
                 }}
-                profilePicture={
-                  message.role === "assistant"
-                    ? "/ai-icon.png"
-                    : session?.user?.image
-                }
+                profilePicture={session?.user?.image}
               >
                 <MessageContent message={message} />
               </ChatMessageArea>
@@ -72,7 +85,11 @@ export const ChatPage: FC<ChatPageProps> = (props) => {
           {loading === "loading" && <ChatLoading />}
         </ChatMessageContentArea>
       </ChatMessageContainer>
-      <ChatInput />
+      <ChatInput
+        chatDocuments={props.chatDocuments}
+        internetSearch={props.extensions.find((e) => e.name == "Bing Search")}
+        threadExtensions={props.chatThread.extension}
+      />
     </main>
   );
 };

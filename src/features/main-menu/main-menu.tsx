@@ -13,6 +13,7 @@ import {
   PocketKnife,
   Sheet,
   VenetianMask,
+  Newspaper,
 } from "lucide-react";
 import { getCurrentUser } from "../auth-page/helpers";
 import { MenuLink } from "./menu-link";
@@ -38,9 +39,11 @@ export const MainMenu = async () => {
               <MessageCircle {...menuIconProps} />
             </MenuLink>
           </MenuItem>
-
           <MenuItem tooltip="Persona">
-            <MenuLink href="/persona" ariaLabel="Go to the Persona configuration page">
+            <MenuLink
+              href="/persona"
+              ariaLabel="Go to the Persona configuration page"
+            >
               <VenetianMask {...menuIconProps} />
             </MenuLink>
           </MenuItem>
@@ -53,19 +56,33 @@ export const MainMenu = async () => {
           </MenuItem>
           </>
           )}
-          {user.isAdmin && (
-            <>
           <MenuItem tooltip="prompts">
-            <MenuLink href="/prompt" ariaLabel="Go to the Prompt Library configuration page">
+            <MenuLink
+              href="/prompt"
+              ariaLabel="Go to the Prompt Library configuration page"
+            >
               <Book {...menuIconProps} />
             </MenuLink>
           </MenuItem>
-          </>
+          {user.isAdmin && (
+            <>
+              <MenuItem tooltip="News">
+                <MenuLink
+                  href="/news"
+                  ariaLabel="Go to News Admin"
+                >
+                  <Newspaper {...menuIconProps} />
+                </MenuLink>
+              </MenuItem>
+            </>
           )}
           {user.isAdmin && (
             <>
               <MenuItem tooltip="reporting">
-                <MenuLink href="/reporting" ariaLabel="Go to the Admin reporting" >
+                <MenuLink
+                  href="/reporting"
+                  ariaLabel="Go to the Admin reporting"
+                >
                   <Sheet {...menuIconProps} />
                 </MenuLink>
               </MenuItem>

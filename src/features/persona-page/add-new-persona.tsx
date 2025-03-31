@@ -1,8 +1,8 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { FC } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import { FC, useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { ServerActionResponse } from "../common/server-action-response";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -23,21 +23,25 @@ import {
   personaStore,
   usePersonaState,
 } from "./persona-store";
+import { ExtensionDetail } from "../chat-page/chat-header/extension-detail";
+import { ExtensionModel } from "../extensions-page/extension-services/models";
 
-interface Props {}
+interface Props {
+  extensions: Array<ExtensionModel>;
+}
 
 export const AddNewPersona: FC<Props> = (props) => {
   const initialState: ServerActionResponse | undefined = undefined;
 
   const { isOpened, persona } = usePersonaState();
 
-  const [formState, formAction] = useFormState(
+  const [formState, formAction] = useActionState(
     addOrUpdatePersona,
-    initialState
+    initialState,
   );
 
   const { data } = useSession();
-
+  
   const PublicSwitch = () => {
     if (data === undefined || data === null) return null;
 
@@ -91,8 +95,8 @@ export const AddNewPersona: FC<Props> = (props) => {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="description">Short description</Label>
-                <Input
-                  type="text"
+                <Textarea
+                  className="min-h-[200px]"
                   required
                   defaultValue={persona.description}
                   name="description"
@@ -107,6 +111,17 @@ export const AddNewPersona: FC<Props> = (props) => {
                   defaultValue={persona.personaMessage}
                   name="personaMessage"
                   placeholder="Personality of your persona"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="extensionIds[]">Extensions</Label>
+                <input type="hidden" name="extensionIds[]" value={persona.extensionIds}/>
+                <ExtensionDetail
+                  disabled={false}
+                  extensions={props.extensions}
+                  installedExtensionIds={persona.extensionIds?.map(e => e) || []}
+                  chatThreadId={persona.id}
+                  parent="persona"
                 />
               </div>
             </div>

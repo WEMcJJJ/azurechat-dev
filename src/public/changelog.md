@@ -1,0 +1,28 @@
+# Release Notes
+
+## [Unreleased]
+
+## [v2.0.0] – 2025-03-31
+
+- Added: Feedback Form
+- Added: Document uploads now support text files (.txt, .md, etc.).
+- Added: Internet Search functionality added and moved to the chatbox.
+- Added: Files can now be deleted from a chat.
+- Added: Files are now visible in the chatbox.
+- Fixed: Tool editing icons are now shown based on user permissions.
+- Fixed: Improved feedback when attempting to upload files that exceed size limits.
+- Added: Support for Personas, which are user-guided AI assistants tailored via specific prompts.
+- Added: Ability to share personas via a link.
+- Added: Introduced a changelog to track updates.
+- Added: Suppport for a Prompt Library, which allows users to create prompt templates - statements or questions meant to help users get creative without having to come up with ideas from scratch.
+- Added: "Published" information for Admin when managing personas, prompts, extensions, and articles.
+- Refactored: Updated code to support newer versions of many different packages, fixing known vulnerabilities.
+- Added: Articles section for useful information, along with admin page to administer/publish articles.
+
+## [v1.5.0] – 2025-01-07
+
+- Added: Improved UI and user experience.
+- Changed: GPT-4o is now useds, instead of GPT-3.5.
+- Added: The ability to upload documents and chat about them.
+- Added: Integration with Okta for user authentication.
+- Added: Integration of DALL·E 3 for image creation based on text descriptions, with automatic handling of prompts for generating images.
