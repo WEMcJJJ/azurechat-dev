@@ -18,7 +18,7 @@ interface Props {
   prompt: PromptModel;
 }
 
-type DropdownAction = "delete";
+type DropdownAction = "edit" | "delete";
 
 export const PromptCardContextMenu: FC<Props> = (props) => {
   const { isLoading, handleAction } = useDropdownAction({
