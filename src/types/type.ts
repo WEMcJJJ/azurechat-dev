@@ -26,6 +26,7 @@ const azureEnvVars = [
   "ADMIN_EMAIL_ADDRESS",
   "AZURE_SPEECH_REGION",
   "AZURE_SPEECH_KEY",
+  "NEXT_PUBLIC_FEEDBACK_LINK",
   "AZURE_KEY_VAULT_NAME",
 ] as const;
 
