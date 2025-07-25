@@ -42,7 +42,7 @@
     "@uiw/react-codemirror": "^4.23.6",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
-    "debug": "^4.4.0",
+    "debug": "^4.4.1",
     "eventsource-parser": "^1.1.1",
     "js-tiktoken": "^1.0.15",
     "lucide-react": "^0.453.0",
