@@ -41,7 +41,7 @@ export const ChatPage: FC<ChatPageProps> = (props) => {
 
   const current = useRef<HTMLDivElement>(null);
 
-  const maxMessages = 30;
+  const maxMessages = 40;
 
   useChatScrollAnchor({ ref: current });
 

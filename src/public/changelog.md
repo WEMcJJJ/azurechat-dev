@@ -4,6 +4,7 @@
 
 ## [v2.0.0] – 2025-03-31
 
+- Changed: GPT-4.1 model is now used.
 - Added: Feedback Form
 - Added: Document uploads now support text files (.txt, .md, etc.).
 - Added: Files can now be deleted from a chat.
