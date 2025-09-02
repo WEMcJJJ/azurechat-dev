@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-## [v2.0.0] – 2025-03-31
+## [v2.0.0] – 2025-09-24
 
 - Changed: GPT-4.1 model is now used.
 - Added: Feedback Form
