@@ -38,3 +38,8 @@ infra/aad_setup.sh
 
 # Okta
 .okta.env
+
+# GitHub Copilot
+/.github/copilot-instructions.md
+/.github/instructions/
+/.github/prompts/
