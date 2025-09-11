@@ -14,6 +14,7 @@ import { Button } from "../ui/button";
 import { ExternalLink, House, Logs } from "lucide-react";
 import { Changelog } from "./changelog";
 import { MenuTrayToggle } from "@/features/main-menu/menu-tray-toggle";
+import { useFeedbackLink } from "@/features/common/use-feedback-link";
 
 interface ChatPersonaProps {
   personas: PersonaModel[];
@@ -21,16 +22,19 @@ interface ChatPersonaProps {
   news: NewsArticleModel[];
 }
 
-const FeedbackButton = ({ feedBackLink }: { feedBackLink: string }) => (
-  <Button
-    variant="ghost"
-    className="flex items-center gap-3"
-    onClick={() => window.open(feedBackLink, "_blank")}
-  >
-    <ExternalLink className="h-5 w-5" />
-    Report Feedback
-  </Button>
-);
+const FeedbackButton = ({ feedBackLink }: { feedBackLink: string }) => {
+  if (!feedBackLink) return null;
+  return (
+    <Button
+      variant="ghost"
+      className="flex items-center gap-3"
+      onClick={() => window.open(feedBackLink, "_blank")}
+    >
+      <ExternalLink className="h-5 w-5" />
+      Report Feedback
+    </Button>
+  );
+};
 
 const HomeButton = ({ onClick }: { onClick: () => void }) => (
   <Button variant="ghost" className="flex items-center gap-3" onClick={onClick}>
@@ -48,18 +52,16 @@ const ChangelogButton = ({ onClick }: { onClick: () => void }) => (
 
 const ChangelogSection = ({
   setShowChangelog,
+  feedbackLink,
 }: {
   setShowChangelog: (arg0: boolean) => void;
+  feedbackLink: string | null;
 }) => (
   <div>
     <div className="flex justify-between">
       <h2 className="text-2xl font-bold mb-3">Changelog</h2>
       <div className="flex gap-2">
-        {process.env.NEXT_PUBLIC_FEEDBACK_LINK && (
-          <FeedbackButton
-            feedBackLink={process.env.NEXT_PUBLIC_FEEDBACK_LINK}
-          />
-        )}
+        {feedbackLink && <FeedbackButton feedBackLink={feedbackLink} />}
         <HomeButton onClick={() => setShowChangelog(false)} />
       </div>
     </div>
@@ -70,19 +72,17 @@ const ChangelogSection = ({
 const ArticlesSection = ({
   news,
   setShowChangelog,
+  feedbackLink,
 }: {
   news: NewsArticleModel[];
   setShowChangelog: (arg0: boolean) => void;
+  feedbackLink: string | null;
 }) => (
   <div>
     <div className="flex justify-between">
       <h2 className="text-2xl font-bold mb-3">Articles</h2>
       <div className="flex gap-2">
-        {process.env.NEXT_PUBLIC_FEEDBACK_LINK && (
-          <FeedbackButton
-            feedBackLink={process.env.NEXT_PUBLIC_FEEDBACK_LINK}
-          />
-        )}
+        {feedbackLink && <FeedbackButton feedBackLink={feedbackLink} />}
         <ChangelogButton onClick={() => setShowChangelog(true)} />
       </div>
     </div>
@@ -120,6 +120,7 @@ const PersonasSection = ({ personas }: { personas: PersonaModel[] }) => (
 
 export const ChatHome: FC<ChatPersonaProps> = ({ personas, news }) => {
   const [showChangelog, setShowChangelog] = useState<boolean>(false);
+  const feedbackLink = useFeedbackLink();
   return (
     <ScrollArea className="flex-1 px-3">
       <main className="flex flex-1 flex-col gap-6 pb-6">
@@ -154,12 +155,13 @@ export const ChatHome: FC<ChatPersonaProps> = ({ personas, news }) => {
 
         <div className="container max-w-4xl flex gap-20 flex-col">
           {showChangelog ? (
-            <ChangelogSection setShowChangelog={setShowChangelog} />
+            <ChangelogSection feedbackLink={feedbackLink} setShowChangelog={setShowChangelog} />
           ) : (
             <>
               <ArticlesSection
                 news={news}
                 setShowChangelog={setShowChangelog}
+                feedbackLink={feedbackLink}
               />
               <PersonasSection personas={personas} />
             </>
