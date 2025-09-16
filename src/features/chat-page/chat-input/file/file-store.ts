@@ -11,6 +11,7 @@ import {
   CrackDocument,
   CreateChatDocument,
 } from "../../chat-services/chat-document-service";
+import { FindChatThreadForCurrentUser } from "../../chat-services/chat-thread-service";
 import { chatStore } from "../../chat-store";
 
 const MAX_UPLOAD_DOCUMENT_SIZE: number = 12582912; // 12MB in bytes
@@ -41,16 +42,31 @@ class FileStore {
 
         const documentIndexResponses: Array<ServerActionResponse<boolean>> = [];
 
+        // Get the current chat thread to use its model ID for embeddings
+        let modelId: string | undefined;
+        try {
+          const chatThreadResponse = await FindChatThreadForCurrentUser(chatThreadId);
+          if (chatThreadResponse.status === "OK") {
+            modelId = chatThreadResponse.response.modelId;
+            console.log(`🔍 Using model ID for document embedding: ${modelId || 'default'}`);
+          } else {
+            console.warn("Failed to get chat thread for model ID, using default:", chatThreadResponse.errors);
+          }
+        } catch (error) {
+          console.warn("Error getting chat thread model ID, using default:", error);
+        }
+
         for (const doc of crackingResponse.response) {
           this.uploadButtonLabel = `Indexing document ${index + 1}/${
             crackingResponse.response.length
           }`;
 
-          // index one document at a time
+          // index one document at a time, passing the model ID from the chat thread
           const indexResponses = await IndexDocuments(
             file.name,
             [doc],
-            chatThreadId
+            chatThreadId,
+            modelId
           );
 
           documentIndexResponses.push(...indexResponses);

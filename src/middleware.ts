@@ -9,7 +9,7 @@ const requireAuth: string[] = [
   "/persona",
   "/prompt"
 ];
-const requireAdmin: string[] = ["/reporting"];
+const requireAdmin: string[] = ["/reporting", "/admin"];
 
 export async function middleware(request: NextRequest) {
   const res = NextResponse.next();
@@ -56,8 +56,10 @@ export const config = {
     "/",
     "/unauthorized/:path*",
     "/reporting/:path*",
+    "/admin/:path*",
     "/api/chat:path*",
     "/api/images:path*",
+    "/api/admin:path*",
     "/chat/:path*",
   ],
 };

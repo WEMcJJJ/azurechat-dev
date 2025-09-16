@@ -7,14 +7,16 @@ import {
   CHAT_THREAD_ATTRIBUTE,
   ChatThreadModel,
 } from "@/features/chat-page/chat-services/models";
+import { NEW_CHAT_NAME } from "@/features/theme/theme-config";
 import {
   ServerActionResponse,
   zodErrorsToServerActionErrors,
 } from "@/features/common/server-action-response";
-import { ConfigContainer } from "@/features/common/services/cosmos";
 import { uniqueId } from "@/features/common/util";
+import { ConfigContainer } from "@/features/common/services/cosmos";
 import { SqlQuerySpec } from "@azure/cosmos";
 import { PERSONA_ATTRIBUTE, PersonaModel, PersonaModelSchema } from "./models";
+import { getDefaultModel } from "@/server/repositories/modelRepository";
 
 interface PersonaInput {
   name: string;
@@ -294,6 +296,18 @@ export const CreatePersonaChat = async (
   if (personaResponse.status === "OK") {
     const persona = personaResponse.response;
 
+    // Get the default model ID to avoid slow lookup during chat loading
+    let modelId: string | undefined;
+    try {
+      const defaultModelResponse = await getDefaultModel();
+      if (defaultModelResponse.status === "OK") {
+        modelId = defaultModelResponse.response.id;
+      }
+    } catch (error) {
+      console.warn("Failed to get default model for persona chat:", error);
+      // Continue without model ID - will be handled when needed
+    }
+
     const response = await UpsertChatThread({
       name: persona.name,
       useName: user.name,
@@ -307,6 +321,7 @@ export const CreatePersonaChat = async (
       personaMessage: persona.personaMessage,
       personaMessageTitle: persona.name,
       extension: persona.extensionIds || [],
+      modelId: modelId,
     });
 
     return response;

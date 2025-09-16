@@ -16,7 +16,16 @@ export interface ChatMessageModel {
   role: ChatRole;
   name: string;
   multiModalImage?: string;
+  modelId?: string; // Store which model generated this message
+  modelName?: string; // Store the friendly name of the model that generated this message
   type: typeof MESSAGE_ATTRIBUTE;
+  // Optional structured metadata for blocked image events
+  blockedMeta?: {
+    source?: string;
+    blockedCategories?: string[];
+    riskScore?: number;
+    suggestions?: string[];
+  };
 }
 
 export type ChatRole = "system" | "user" | "assistant" | "function" | "tool";
@@ -33,6 +42,8 @@ export interface ChatThreadModel {
   personaMessage: string;
   personaMessageTitle: string;
   extension: string[];
+  modelId?: string; // ID of the Azure OpenAI model to use for this thread
+  imageModelId?: string; // ID of the image generation model to use for this thread (dall-e-3, gpt-image-1)
   type: typeof CHAT_THREAD_ATTRIBUTE;
 }
 
@@ -91,6 +102,26 @@ export type AzureChatCompletionFinalContent = {
   response: string;
 };
 
+// Unified image block event for consistent UX
+export interface AzureChatCompletionImageBlockedPayload {
+  source: 'api_content_filter' | 'model_refusal' | 'pre_validation';
+  message: string; // human readable guidance (may be markdown)
+  originalPrompt?: string;
+  requestId?: string;
+  blockedCategories?: string[]; // e.g. ['violence:high']
+  tokenSummary?: Record<string, { count: number; samples: string[] }>;
+  suggestions?: string[];
+  guidanceVersion: string;
+  schemaVersion?: number;
+  riskScore?: number; // aggregated lexical risk heuristic 0-1
+  riskBreakdown?: Record<string, number>; // per category normalized weights
+}
+
+export type AzureChatCompletionImageBlocked = {
+  type: 'imageBlocked';
+  response: AzureChatCompletionImageBlockedPayload;
+};
+
 export type AzureChatCompletionError = {
   type: "error";
   response: string;
@@ -107,6 +138,7 @@ export type AzureChatCompletion =
   | AzureChatCompletionFunctionCallResult
   | AzureChatCompletionContent
   | AzureChatCompletionFinalContent
+  | AzureChatCompletionImageBlocked
   | AzureChatCompletionAbort;
 
 // https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/prebuilt/read?view=doc-intel-4.0.0&tabs=sample-code#input-requirements-v4

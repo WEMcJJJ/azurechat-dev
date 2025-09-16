@@ -38,19 +38,22 @@ export const ChatMenu: FC<ChatMenuProps> = (props) => {
 export const GroupChatThreadByType = (menuItems: Array<ChatThreadModel>) => {
   const groupedMenuItems: Array<MenuItemsGroup> = [];
 
-  // todays date
-  const today = new Date();
-  // 7 days ago
-  const sevenDaysAgo = new Date(today);
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  // Get current time
+  const now = new Date().getTime();
+  
+  // Calculate 7 days ago in milliseconds (7 days * 24 hours * 60 minutes * 60 seconds * 1000 milliseconds)
+  const sevenDaysAgoMs = now - (7 * 24 * 60 * 60 * 1000);
 
   menuItems.sort(sortByTimestamp).forEach((el) => {
+    // Convert lastMessageAt to timestamp for reliable comparison
+    const lastMessageTimeMs = new Date(el.lastMessageAt).getTime();
+    
     if (el.bookmarked) {
       groupedMenuItems.push({
         ...el,
         groupName: "Bookmarked",
       });
-    } else if (new Date(el.lastMessageAt) > sevenDaysAgo) {
+    } else if (lastMessageTimeMs >= sevenDaysAgoMs) {
       groupedMenuItems.push({
         ...el,
         groupName: "Past 7 days",

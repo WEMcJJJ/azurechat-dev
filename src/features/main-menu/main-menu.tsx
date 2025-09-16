@@ -7,6 +7,7 @@ import {
   menuIconProps,
 } from "@/ui/menu";
 import {
+  BarChart3,
   Book,
   Home,
   MessageCircle,
@@ -14,6 +15,7 @@ import {
   Sheet,
   VenetianMask,
   Newspaper,
+  Settings,
 } from "lucide-react";
 import { getCurrentUser } from "../auth-page/helpers";
 import { MenuLink } from "./menu-link";
@@ -66,6 +68,14 @@ export const MainMenu = async () => {
           </MenuItem>
           {user.isAdmin && (
             <>
+              <MenuItem tooltip="Models">
+                <MenuLink
+                  href="/admin/models"
+                  ariaLabel="Go to Model Configuration"
+                >
+                  <Settings {...menuIconProps} />
+                </MenuLink>
+              </MenuItem>
               <MenuItem tooltip="News">
                 <MenuLink
                   href="/news"
@@ -86,6 +96,18 @@ export const MainMenu = async () => {
                   <Sheet {...menuIconProps} />
                 </MenuLink>
               </MenuItem>
+              {process.env.ANALYTICS_EXTERNAL_URL && (
+                <MenuItem tooltip="Chat Analytics" asChild>
+                  <a
+                    href={process.env.ANALYTICS_EXTERNAL_URL}
+                    aria-label="Go to Chat Analytics Dashboard"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <BarChart3 {...menuIconProps} />
+                  </a>
+                </MenuItem>
+              )}
             </>
           )}
         </MenuItemContainer>

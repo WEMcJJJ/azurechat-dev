@@ -2,7 +2,7 @@
 import "server-only";
 
 import { userHashedId } from "@/features/auth-page/helpers";
-import { OpenAIInstance } from "@/features/common/services/openai";
+import { getOpenAIInstance } from "@/features/common/services/openai";
 import {
   ChatCompletionStreamingRunner,
   ChatCompletionStreamParams,
@@ -22,12 +22,13 @@ export const ChatApiRAG = async (props: {
 }): Promise<ChatCompletionStreamingRunner> => {
   const { chatThread, userMessage, history, signal } = props;
 
-  const openAI = OpenAIInstance();
+  const openAI = await getOpenAIInstance(chatThread.modelId);
 
   const documentResponse = await SimilaritySearch(
     userMessage,
     10,
-    `user eq '${await userHashedId()}' and chatThreadId eq '${chatThread.id}'`
+    `user eq '${await userHashedId()}' and chatThreadId eq '${chatThread.id}'`,
+    chatThread.modelId
   );
 
   const documents: ChatCitationModel[] = [];

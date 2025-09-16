@@ -1,6 +1,5 @@
 import {
   ChatCompletionAssistantMessageParam,
-  ChatCompletionFunctionMessageParam,
   ChatCompletionMessageParam,
 } from "openai/resources/chat/completions";
 import { ChatMessageModel } from "./models";
@@ -11,11 +10,12 @@ export const mapOpenAIChatMessages = (
   return messages.map((message) => {
     switch (message.role) {
       case "function":
+        // Convert deprecated 'function' role to 'assistant' role with proper formatting
+        // This maintains backward compatibility with existing data
         return {
-          role: message.role,
-          name: message.name,
-          content: message.content,
-        } as ChatCompletionFunctionMessageParam;
+          role: "assistant",
+          content: `Function result from ${message.name}: ${message.content}`,
+        } as ChatCompletionAssistantMessageParam;
       case "assistant":
         return {
           role: message.role,

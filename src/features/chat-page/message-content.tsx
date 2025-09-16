@@ -1,6 +1,6 @@
+import React from "react";
 import { Markdown } from "@/features/ui/markdown/markdown";
 import { FunctionSquare } from "lucide-react";
-import React from "react";
 import {
   Accordion,
   AccordionContent,
@@ -9,6 +9,7 @@ import {
 } from "../ui/accordion";
 import { RecursiveUI } from "../ui/recursive-ui";
 import { CitationAction } from "./citation/citation-action";
+import { ImageBlockedCard } from "../ui/chat/image-blocked-card";
 
 interface MessageContentProps {
   message: {
@@ -19,15 +20,47 @@ interface MessageContentProps {
   };
 }
 
+const BLOCK_HEADER = "🚫 **Image blocked"; // prefix we add on server side
+
+function extractCategories(markdown: string): string[] | undefined {
+  const m = markdown.match(/Blocked Categories:\**\s*([^\n]+)/i);
+  if (m) {
+    return m[1].split(/[,;]+/).map(s=>s.trim()).filter(Boolean);
+  }
+  return undefined;
+}
+
 const MessageContent: React.FC<MessageContentProps> = ({ message }) => {
+  const isBlocked = message.role === 'assistant' && ((message as any).blockedMeta || message.content.startsWith(BLOCK_HEADER));
+  if (isBlocked) {
+    const meta: any = (message as any).blockedMeta || {};
+    return (
+      <ImageBlockedCard
+        markdown={message.content}
+        source={meta.source || (/pre-validation/i.test(message.content) ? 'pre-validation' : 'content-filter')}
+        blockedCategories={meta.blockedCategories || extractCategories(message.content)}
+      />
+    );
+  }
   if (message.role === "assistant" || message.role === "user") {
     return (
       <>
-        <Markdown
-          content={message.content}
-          onCitationClick={CitationAction}
-        ></Markdown>
-        {message.multiModalImage && <img src={message.multiModalImage} />}
+        <Markdown content={message.content} onCitationClick={CitationAction} />
+        {message.multiModalImage && (
+          <a
+            href={message.multiModalImage}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block mt-2 group"
+            title="Open full-size image in new tab"
+          >
+            <img
+              src={message.multiModalImage}
+              alt="Chat image"
+              className="max-h-64 rounded border border-border transition group-hover:shadow-lg cursor-pointer"
+            />
+          </a>
+        )}
       </>
     );
   }

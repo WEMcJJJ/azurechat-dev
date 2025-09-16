@@ -1,0 +1,7 @@
+# ESLint ignore file to exclude generated files and directories
+.next/
+node_modules/
+out/
+build/
+dist/
+*.min.js

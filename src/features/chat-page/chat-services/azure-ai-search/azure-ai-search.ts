@@ -7,7 +7,8 @@ import {
   AzureAISearchIndexClientInstance,
   AzureAISearchInstance,
 } from "@/features/common/services/ai-search";
-import { OpenAIEmbeddingInstance } from "@/features/common/services/openai";
+import { getOpenAIEmbeddingInstance } from "@/features/common/services/openai";
+import { getModelConfigForThread } from "@/server/services/aoaiClientFactory";
 import { uniqueId } from "@/features/common/util";
 import {
   AzureKeyCredential,
@@ -64,13 +65,15 @@ export const SimpleSearch = async (
 export const SimilaritySearch = async (
   searchText: string,
   k: number,
-  filter?: string
+  filter?: string,
+  modelId?: string
 ): Promise<ServerActionResponse<Array<DocumentSearchResponse>>> => {
   try {
-    const openai = OpenAIEmbeddingInstance();
+    const openai = await getOpenAIEmbeddingInstance(modelId);
+    const modelConfig = await getModelConfigForThread(modelId);
     const embeddings = await openai.embeddings.create({
       input: searchText,
-      model: "",
+      model: modelConfig.deploymentName,
     });
 
     const searchClient = AzureAISearchInstance<AzureSearchDocumentIndex>();
@@ -120,14 +123,21 @@ export const ExtensionSimilaritySearch = async (props: {
   apiKey: string;
   searchName: string;
   indexName: string;
+  modelId?: string;
 }): Promise<ServerActionResponse<Array<DocumentSearchResponse>>> => {
   try {
-    const openai = OpenAIEmbeddingInstance();
+    const openai = await getOpenAIEmbeddingInstance(props.modelId);
     const { searchText, vectors, apiKey, searchName, indexName } = props;
+    
+    // Use dedicated embeddings deployment name instead of chat model deployment
+    const embeddingsDeploymentName = process.env.AZURE_OPENAI_API_EMBEDDINGS_DEPLOYMENT_NAME;
+    if (!embeddingsDeploymentName) {
+      throw new Error("AZURE_OPENAI_API_EMBEDDINGS_DEPLOYMENT_NAME is not configured");
+    }
 
     const embeddings = await openai.embeddings.create({
       input: searchText,
-      model: "",
+      model: embeddingsDeploymentName,
     });
 
     const endpoint = `https://${searchName}.search.windows.net`;
@@ -200,7 +210,8 @@ export const ExtensionSimilaritySearch = async (props: {
 export const IndexDocuments = async (
   fileName: string,
   docs: string[],
-  chatThreadId: string
+  chatThreadId: string,
+  modelId?: string
 ): Promise<Array<ServerActionResponse<boolean>>> => {
   try {
     const documentsToIndex: AzureSearchDocumentIndex[] = [];
@@ -219,7 +230,7 @@ export const IndexDocuments = async (
     }
 
     const instance = AzureAISearchInstance();
-    const embeddingsResponse = await EmbedDocuments(documentsToIndex);
+    const embeddingsResponse = await EmbedDocuments(documentsToIndex, modelId);
 
     if (embeddingsResponse.status === "OK") {
       const uploadResponse = await instance.uploadDocuments(
@@ -316,19 +327,26 @@ export const DeleteDocumentsOfChatThread = async (
 };
 
 export const EmbedDocuments = async (
-  documents: Array<AzureSearchDocumentIndex>
+  documents: Array<AzureSearchDocumentIndex>,
+  modelId?: string
 ): Promise<ServerActionResponse<Array<AzureSearchDocumentIndex>>> => {
   try {
-    const openai = OpenAIEmbeddingInstance();
+    const openai = await getOpenAIEmbeddingInstance(modelId);
+    
+    // Use dedicated embeddings deployment name instead of chat model deployment
+    const embeddingsDeploymentName = process.env.AZURE_OPENAI_API_EMBEDDINGS_DEPLOYMENT_NAME;
+    if (!embeddingsDeploymentName) {
+      throw new Error("AZURE_OPENAI_API_EMBEDDINGS_DEPLOYMENT_NAME is not configured");
+    }
 
     const contentsToEmbed = documents.map((d) => d.pageContent);
 
     const embeddings = await openai.embeddings.create({
       input: contentsToEmbed,
-      model: process.env.AZURE_OPENAI_API_EMBEDDINGS_DEPLOYMENT_NAME,
+      model: embeddingsDeploymentName,
     });
 
-    embeddings.data.forEach((embedding, index) => {
+    embeddings.data.forEach((embedding: any, index: number) => {
       documents[index].embedding = embedding.embedding;
     });
 

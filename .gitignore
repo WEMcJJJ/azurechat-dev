@@ -43,3 +43,32 @@ infra/aad_setup.sh
 /.github/copilot-instructions.md
 /.github/instructions/
 /.github/prompts/
+
+# AI Generated DocumentS/Files (could contain secrets)
+MODEL_MANAGEMENT_SUMMARY.md
+MODEL_SETUP_SUMMARY.md
+MODEL_SETUP_APPROACH.md
+debug-models.js
+test-encryption.js
+src/test-*.js
+src/scripts/
+src/app/**/migrate-models/
+__tests__/
+*.test.ts
+scripts/fix-chat-thread-types.ps1
+docs/audit-hardcoded-endpoints.md
+docs/model-management.md
+
+# Development & Debug Files
+**/debug-image-config/
+**/*route_new.ts
+scripts/*.ps1
+
+# Key Vault reference generated snapshots (if any tooling outputs them)
+kv-secrets-export.json
+
+# Prevent accidental check-in of analysis artifacts
+audit-hardcoded-endpoints.md.backup
+*.secrets-scan.json
+
+# Allowlist note: instrumentation is handled by Next.js; ensure secret values never logged.

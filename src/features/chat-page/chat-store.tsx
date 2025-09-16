@@ -1,6 +1,7 @@
 "use client";
 import { uniqueId } from "@/features/common/util";
 import { showError } from "@/features/globals/global-message-store";
+import { logger } from "@/app/(authenticated)/application-insights-service";
 import { AI_NAME, NEW_CHAT_NAME } from "@/features/theme/theme-config";
 import {
   ParsedEvent,
@@ -188,12 +189,24 @@ class ChatState {
   }
 
   private async updateTitle() {
-    if (this.chatThread && this.chatThread.name === NEW_CHAT_NAME) {
-      await UpdateChatTitle(this.chatThreadId, this.messages[0].content);
-      RevalidateCache({
-        page: "chat",
-        type: "layout",
-      });
+    if (this.chatThread) {
+      // Check if this is a chat that needs auto-title generation
+      const isNewChat = this.chatThread.name === NEW_CHAT_NAME;
+      const isPersonaChat = this.chatThread.personaMessage && 
+                           this.chatThread.personaMessage !== "" && 
+                           this.chatThread.name === this.chatThread.personaMessageTitle;
+      
+      if (isNewChat || isPersonaChat) {
+        // Find the first user message for title generation
+        const firstUserMessage = this.messages.find(message => message.role === "user");
+        if (firstUserMessage && firstUserMessage.content) {
+          await UpdateChatTitle(this.chatThreadId, firstUserMessage.content);
+          RevalidateCache({
+            page: "chat",
+            type: "layout",
+          });
+        }
+      }
     }
   }
 
@@ -283,6 +296,48 @@ class ChatState {
             this.loading = "idle";
             this.completed(this.lastMessage);
             this.updateTitle();
+            break;
+          case "imageBlocked":
+            // Represent unified image block as assistant message (content already markdown)
+            const blockedMessage: ChatMessageModel = {
+              id: uniqueId(),
+              content: responseType.response.message,
+              name: AI_NAME,
+              role: "assistant",
+              createdAt: new Date(),
+              isDeleted: false,
+              threadId: this.chatThreadId,
+              type: "CHAT_MESSAGE",
+              userId: "",
+              multiModalImage: "",
+              blockedMeta: {
+                source: responseType.response.source,
+                blockedCategories: responseType.response.blockedCategories,
+                riskScore: (responseType.response as any).riskScore,
+                suggestions: responseType.response.suggestions,
+              }
+            };
+            this.addToMessages(blockedMessage);
+            this.lastMessage = blockedMessage.content;
+            this.loading = "idle";
+            this.completed(this.lastMessage);
+              try {
+                if (logger) {
+                  logger.trackEvent({
+                    name: 'ImageBlocked',
+                    properties: {
+                      source: responseType.response.source,
+                      blockedCategories: (responseType.response.blockedCategories || []).join(','),
+                      guidanceVersion: responseType.response.guidanceVersion,
+                      riskScore: (responseType.response as any).riskScore,
+                      blockId: (responseType.response as any).blockId,
+                      promptHash: (responseType.response as any).promptHash,
+                    }
+                  });
+                }
+              } catch (e) {
+                console.warn('Telemetry emit failed', e);
+              }
             break;
           default:
             break;

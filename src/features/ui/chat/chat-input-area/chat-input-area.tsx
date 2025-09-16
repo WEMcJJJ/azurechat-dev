@@ -15,7 +15,7 @@ export const ChatInputForm = React.forwardRef<
     <div className="container max-w-3xl flex flex-col gap-1">
       <ChatInputStatus status={status} />
       <div className="backdrop-blur-xl bg-background/70 rounded-md overflow-hidden focus-within:border-primary border">
-        <form ref={ref} className="p-[2px]" {...props}>
+  <form ref={ref} data-chat-input="true" className="p-[2px]" {...props}>
           {props.children}
         </form>
       </div>
@@ -36,7 +36,9 @@ export const ChatInputStatus = (props: { status?: string }) => {
 };
 
 export const ChatInputActionArea = (props: { children?: React.ReactNode }) => {
-  return <div className="flex justify-between p-2">{props.children}</div>;
+  // Children expected order: [SecondaryArea, CenterArea (model dropdown), PrimaryArea]
+  // We allow flexible insertion; layout uses flex with gap.
+  return <div className="flex items-center justify-between p-2 gap-2">{props.children}</div>;
 };
 
 export const ChatInputPrimaryActionArea = (props: {

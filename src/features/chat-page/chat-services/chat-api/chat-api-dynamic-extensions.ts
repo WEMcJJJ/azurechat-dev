@@ -17,11 +17,22 @@ import { ToolsInterface } from "../models";
 export const GetDynamicExtensions = async (props: {
   extensionIds: string[];
 }): Promise<ServerActionResponse<Array<any>>> => {
-  const extensionResponse = await FindAllExtensionForCurrentUserAndIds(props.extensionIds);
+  // Handle case where extensionIds might be undefined or not an array
+  const safeExtensionIds = Array.isArray(props.extensionIds) ? props.extensionIds : [];
+  
+  // If no extension IDs, return empty array immediately
+  if (safeExtensionIds.length === 0) {
+    return {
+      status: "OK",
+      response: [],
+    };
+  }
+
+  const extensionResponse = await FindAllExtensionForCurrentUserAndIds(safeExtensionIds);
 
   if (extensionResponse.status === "OK") {
     const extensionToReturn = extensionResponse.response.filter((e) =>
-      props.extensionIds.includes(e.id)
+      safeExtensionIds.includes(e.id)
     );
 
     const dynamicExtensions: Array<RunnableToolFunction<any>> = [];

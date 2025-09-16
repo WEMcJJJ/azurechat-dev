@@ -7,6 +7,7 @@ import { uniqueId } from "@/features/common/util";
 import { SqlQuerySpec } from "@azure/cosmos";
 import { HistoryContainer } from "../../common/services/cosmos";
 import { ChatMessageModel, ChatRole, MESSAGE_ATTRIBUTE } from "./models";
+import { UpdateChatThreadTimestamp } from "./chat-thread-service";
 
 export const FindTopChatMessagesForCurrentUser = async (
   chatThreadID: string,
@@ -113,12 +114,16 @@ export const CreateChatMessage = async ({
   role,
   chatThreadId,
   multiModalImage,
+  modelId,
+  modelName,
 }: {
   name: string;
   role: ChatRole;
   content: string;
   chatThreadId: string;
   multiModalImage?: string;
+  modelId?: string; // Add model ID parameter
+  modelName?: string; // Add model friendly name parameter
 }): Promise<ServerActionResponse<ChatMessageModel>> => {
   const userId = await userHashedId();
   const modelToSave: ChatMessageModel = {
@@ -132,8 +137,18 @@ export const CreateChatMessage = async ({
     threadId: chatThreadId,
     userId: userId,
     multiModalImage: multiModalImage,
+    modelId: modelId, // Store the model ID
+    modelName: modelName, // Store the model friendly name
   };
-  return await UpsertChatMessage(modelToSave);
+  
+  const result = await UpsertChatMessage(modelToSave);
+  
+  // Update the chat thread's lastMessageAt timestamp when a new message is added
+  if (result.status === "OK") {
+    await UpdateChatThreadTimestamp(chatThreadId);
+  }
+  
+  return result;
 };
 
 export const UpsertChatMessage = async (

@@ -1,7 +1,7 @@
 "use server";
 import "server-only";
 
-import { OpenAIInstance } from "@/features/common/services/openai";
+import { getOpenAIInstance } from "@/features/common/services/openai";
 import { FindExtensionByID } from "@/features/extensions-page/extension-services/extension-service";
 import { RunnableToolFunction } from "openai/lib/RunnableFunction";
 import { ChatCompletionStreamingRunner } from "openai/resources/beta/chat/completions";
@@ -18,7 +18,7 @@ export const ChatApiExtensions = async (props: {
 }): Promise<ChatCompletionStreamingRunner> => {
   const { userMessage, history, signal, chatThread, extensions } = props;
 
-  const openAI = OpenAIInstance();
+  const openAI = await getOpenAIInstance(chatThread.modelId);
   const systemMessage = await extensionsSystemMessage(chatThread);
 
   const messages: ChatCompletionMessageParam[] =  [

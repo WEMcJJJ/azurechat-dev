@@ -6,8 +6,9 @@ import type {
   ToastProps,
 } from "@/features/ui/toast"
 
-const TOAST_LIMIT = 1
-const TOAST_REMOVE_DELAY = 1000000
+const TOAST_LIMIT = 3
+// Disable auto removal by not scheduling a removal timeout
+const TOAST_REMOVE_DELAY = Number.MAX_SAFE_INTEGER
 
 type ToasterToast = ToastProps & {
   id: string
@@ -56,20 +57,8 @@ interface State {
 
 const toastTimeouts = new Map<string, ReturnType<typeof setTimeout>>()
 
-const addToRemoveQueue = (toastId: string) => {
-  if (toastTimeouts.has(toastId)) {
-    return
-  }
-
-  const timeout = setTimeout(() => {
-    toastTimeouts.delete(toastId)
-    dispatch({
-      type: "REMOVE_TOAST",
-      toastId: toastId,
-    })
-  }, TOAST_REMOVE_DELAY)
-
-  toastTimeouts.set(toastId, timeout)
+const addToRemoveQueue = (_toastId: string) => {
+  // intentionally no-op to keep toast until user closes it
 }
 
 export const reducer = (state: State, action: Action): State => {

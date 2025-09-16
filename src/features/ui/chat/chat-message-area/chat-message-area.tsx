@@ -16,8 +16,28 @@ export const ChatMessageArea = (props: {
   profileName?: string;
   role: "function" | "user" | "assistant" | "system" | "tool";
   onCopy: () => void;
+  modelId?: string; // Keep for backward compatibility
+  modelName?: string; // Direct model friendly name from database
 }) => {
   const [isIconChecked, setIsIconChecked] = useState(false);
+
+  // For legacy messages without stored model name, fetch it asynchronously
+  const [legacyModelName, setLegacyModelName] = useState<string>("");
+
+  // Only fetch model name for old messages that don't have it stored in database
+  useEffect(() => {
+    if (props.role === "assistant" && props.modelId && !props.modelName) {
+      import("@/server/services/aoaiClientFactory").then(({ getModelConfigForThread }) => {
+        getModelConfigForThread(props.modelId!).then((config) => {
+          if (config?.friendlyName) {
+            setLegacyModelName(config.friendlyName);
+          }
+        }).catch((error) => {
+          console.warn("Failed to fetch model config for legacy message:", error);
+        });
+      });
+    }
+  }, [props.role, props.modelId, props.modelName]);
 
   const handleButtonClick = () => {
     props.onCopy();
@@ -86,7 +106,13 @@ export const ChatMessageArea = (props: {
             {props.profileName}
           </div>
         </div>
-        <div className=" h-7 flex items-center justify-between">
+        <div className=" h-7 flex items-center justify-between gap-2">
+          {/* Show model name for assistant messages */}
+          {props.role === "assistant" && (props.modelName || legacyModelName) && (
+            <div className="text-xs text-muted-foreground px-2 py-1 bg-muted/50 rounded-md">
+              {props.modelName || legacyModelName}
+            </div>
+          )}
           <div>
             <Button
               variant={"ghost"}

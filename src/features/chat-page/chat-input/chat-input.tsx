@@ -38,6 +38,8 @@ import { SoftDeleteChatDocumentsForCurrentUser } from "../chat-services/chat-thr
 import { RevalidateCache } from "@/features/common/navigation-helpers";
 import { ExtensionModel } from "@/features/extensions-page/extension-services/models";
 import { InternetSearch } from "@/features/ui/chat/chat-input-area/internet-search";
+import { useState, useEffect } from "react";
+import { ImageGenerationOptions } from "@/features/image/components/image-generation-options";
 
 interface ChatInputProps {
   chatDocuments: ChatDocumentModel[];
@@ -55,12 +57,41 @@ export const ChatInput = ({
   const { isPlaying } = useTextToSpeech();
   const { isMicrophoneReady } = useSpeechToText();
   const { rows } = useChatInputDynamicHeight();
+  
+  // Check if models are available
+  const [hasModels, setHasModels] = useState(true); // Optimistically assume models exist
+  const [checkingModels, setCheckingModels] = useState(true);
+
+  useEffect(() => {
+    checkModelAvailability();
+  }, []);
+
+  const checkModelAvailability = async () => {
+    try {
+      const response = await fetch('/api/models', {
+        cache: 'no-cache' // Always check fresh status
+      });
+      
+      if (response.ok) {
+        const models = await response.json();
+        const modelsArray = Array.isArray(models) ? models : [];
+        setHasModels(modelsArray.length > 0);
+      } else {
+        setHasModels(false);
+      }
+    } catch (error) {
+      console.error('Failed to check model availability:', error);
+      setHasModels(false);
+    } finally {
+      setCheckingModels(false);
+    }
+  };
 
   const submitButton = React.useRef<HTMLButtonElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
   const submit = () => {
-    if (formRef.current) {
+    if (formRef.current && hasModels) {
       formRef.current.requestSubmit();
     }
   };
@@ -172,6 +203,10 @@ export const ChatInput = ({
           />
           <PromptSlider />
         </ChatInputSecondaryActionArea>
+        {/* Centered model dropdown */}
+        <div className="flex-1 flex justify-center">
+          <ImageGenerationOptions />
+        </div>
         <ChatInputPrimaryActionArea>
           <ImageInput />
           <Microphone
@@ -184,7 +219,11 @@ export const ChatInput = ({
           {loading === "loading" ? (
             <StopChat stop={() => chatStore.stopGeneratingMessages()} />
           ) : (
-            <SubmitChat ref={submitButton} />
+            <SubmitChat 
+              ref={submitButton} 
+              disabled={!hasModels || checkingModels}
+              title={!hasModels ? "No AI models configured - contact administrator" : "Send message"}
+            />
           )}
         </ChatInputPrimaryActionArea>
       </ChatInputActionArea>
