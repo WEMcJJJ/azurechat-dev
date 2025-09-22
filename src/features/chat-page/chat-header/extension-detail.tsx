@@ -21,6 +21,7 @@ interface Props {
   installedExtensionIds: Array<string>;
   disabled: boolean;
   parent: string;
+  isAdmin: boolean;
 }
 
 export const ExtensionDetail: FC<Props> = (props) => {
@@ -42,6 +43,10 @@ export const ExtensionDetail: FC<Props> = (props) => {
 
   const installedCount = props.installedExtensionIds?.length ?? 0;
   const totalCount = props.extensions.length;
+
+  if (!props.isAdmin) {
+    return null;
+  }
 
   return (
     <Sheet>
