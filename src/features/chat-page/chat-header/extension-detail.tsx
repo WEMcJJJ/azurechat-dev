@@ -12,6 +12,7 @@ import {
 import { Switch } from "@/features/ui/switch";
 import { Globe, PocketKnife } from "lucide-react";
 import { FC } from "react";
+import { useSession } from "next-auth/react";
 import { chatStore } from "../chat-store";
 import { personaStore } from "@/features/persona-page/persona-store";
 
@@ -24,6 +25,8 @@ interface Props {
 }
 
 export const ExtensionDetail: FC<Props> = (props) => {
+  const { data: session } = useSession();
+  
   const toggleInstall = async (isChecked: boolean, extensionId: string) => {
     if (isChecked) {
       if (props.parent === "chat") {
@@ -42,6 +45,11 @@ export const ExtensionDetail: FC<Props> = (props) => {
 
   const installedCount = props.installedExtensionIds?.length ?? 0;
   const totalCount = props.extensions.length;
+
+  // Only render the extension button for admin users
+  if (!session?.user?.isAdmin) {
+    return null;
+  }
 
   return (
     <Sheet>
