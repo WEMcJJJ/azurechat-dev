@@ -46,7 +46,7 @@ export const ExtensionDetail: FC<Props> = (props) => {
   const installedCount = props.installedExtensionIds?.length ?? 0;
   const totalCount = props.extensions.length;
 
-  // Only render the extension button for admin users
+  // Only render the extension button for admin users - will be removed in future release
   if (!session?.user?.isAdmin) {
     return null;
   }
