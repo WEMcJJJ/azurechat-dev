@@ -28,6 +28,7 @@ import { ExtensionModel } from "../extensions-page/extension-services/models";
 
 interface Props {
   extensions: Array<ExtensionModel>;
+  isAdmin: boolean; 
 }
 
 export const AddNewPersona: FC<Props> = (props) => {
@@ -122,6 +123,7 @@ export const AddNewPersona: FC<Props> = (props) => {
                   installedExtensionIds={persona.extensionIds?.map(e => e) || []}
                   chatThreadId={persona.id}
                   parent="persona"
+                  isAdmin={props.isAdmin}
                 />
               </div>
             </div>

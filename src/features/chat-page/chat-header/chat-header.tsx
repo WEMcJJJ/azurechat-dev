@@ -11,6 +11,7 @@ interface Props {
   chatThread: ChatThreadModel;
   chatDocuments: Array<ChatDocumentModel>;
   extensions: Array<ExtensionModel>;
+  isAdmin: boolean;
 }
 
 export const ChatHeader: FC<Props> = (props) => {
@@ -39,6 +40,7 @@ export const ChatHeader: FC<Props> = (props) => {
             installedExtensionIds={props.chatThread.extension}
             chatThreadId={props.chatThread.id}
             parent={"chat"}
+            isAdmin={props.isAdmin}
           />
         </div>
       </div>

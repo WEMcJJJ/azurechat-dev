@@ -29,6 +29,12 @@ interface ChatPageProps {
 export const ChatPage: FC<ChatPageProps> = (props) => {
   const { data: session } = useSession();
 
+  const adminEmails = process.env.NEXT_PUBLIC_ADMIN_EMAIL_ADDRESS
+    ? process.env.NEXT_PUBLIC_ADMIN_EMAIL_ADDRESS.split(",")
+    : [];
+  const userEmail = session?.user?.email ?? "";
+  const isAdmin = adminEmails.includes(userEmail);
+
   useEffect(() => {
     chatStore.initChatSession({
       chatThread: props.chatThread,
@@ -51,6 +57,7 @@ export const ChatPage: FC<ChatPageProps> = (props) => {
         chatThread={props.chatThread}
         chatDocuments={props.chatDocuments}
         extensions={props.extensions}
+        isAdmin={isAdmin}
       />
 
       {messages.length > maxMessages && (
