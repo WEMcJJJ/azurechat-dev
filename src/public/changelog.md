@@ -1,6 +1,7 @@
 # Release Notes
 
-## [Unreleased]
+## [v2.0.1]
+- Changed: Switched login from Okta to Entra ID
 
 ## [v2.0.0] – 2025-09-24
 

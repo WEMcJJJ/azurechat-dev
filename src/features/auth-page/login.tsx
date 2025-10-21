@@ -26,15 +26,12 @@ export const LogIn: FC<LoginProps> = (props) => {
           </Avatar>
           <span className="text-primary">{AI_NAME}</span>
         </CardTitle>
-        <CardDescription>
-        Log in with your WestEd Okta account
-        </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
-        <Button onClick={() => signIn("okta")}> Okta</Button>
+        {/* <Button onClick={() => signIn("okta")}> Okta</Button>--> */}
+        <Button onClick={() => signIn("azure-ad")}> Log in</Button>
         {props.isDevMode ? (
-            <><Button onClick={() => signIn("azure-ad")}> Microsoft Entra</Button>
-            <Button onClick={() => signIn("localdev")}>
+            <><Button onClick={() => signIn("localdev")}>
             Basic Auth (DEV ONLY)
           </Button></>
         ) : null}
