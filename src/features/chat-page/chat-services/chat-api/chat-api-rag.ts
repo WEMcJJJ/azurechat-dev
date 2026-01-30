@@ -26,7 +26,7 @@ export const ChatApiRAG = async (props: {
 
   const documentResponse = await SimilaritySearch(
     userMessage,
-    10,
+    5,
     `user eq '${await userHashedId()}' and chatThreadId eq '${chatThread.id}'`
   );
 
@@ -50,20 +50,31 @@ export const ChatApiRAG = async (props: {
       return context;
     })
     .join("\n------\n");
+  
   // Augment the user prompt
-  const _userMessage = `\n
-- Review the following content from documents uploaded by the user and create a final answer.
-- If you don't know the answer, state that you don't know and still try to address the question as best as possible.
-- You must always include a citation at the end of your answer and don't include full stop after the citations.
-- Use the format for your citation {% citation items=[{name:"filename 1",id:"file id"}, {name:"filename 2",id:"file id"}] /%}
+  let _userMessage = "";
+  
+  if (documents.length === 0) {
+    // No relevant documents found - inform user and answer from general knowledge
+    _userMessage = `Note: No directly relevant content found in your uploaded documents for this question. Answering from general knowledge.\n\nQuestion: ${userMessage}`;
+  } else {
+    // Documents found - provide them as supplementary context
+    _userMessage = `\nThe user has uploaded documents to this conversation. Below are relevant excerpts that may help answer their question:\n
 ----------------
-content: 
+Document Content:
 ${content}
 \n
----------------- \n
-question: 
-${userMessage}
+----------------\n
+Instructions:
+- Use the document content above when it's relevant to the question
+- You can and should also use your general knowledge and reasoning abilities to provide comprehensive answers
+- Feel free to combine information from the documents with your broader knowledge when helpful
+- Include a citation at the end of your answer ONLY when you directly reference content from the uploaded documents
+- Use this format for citations: {% citation items=[{name:"filename",id:"file id"}] /%}
+- For questions that don't relate to the documents, or when using only general knowledge, no citation is needed\n
+Question: ${userMessage}
 `;
+  }
 
   const stream: ChatCompletionStreamParams = {
     model: "",

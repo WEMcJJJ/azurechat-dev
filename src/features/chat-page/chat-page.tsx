@@ -11,6 +11,7 @@ import { useChatScrollAnchor } from "@/features/ui/chat/chat-message-area/use-ch
 import { useSession } from "next-auth/react";
 import { FC, useEffect, useRef } from "react";
 import { ExtensionModel } from "../extensions-page/extension-services/models";
+import { isImageToolOutput } from "./chat-helpers";
 import { ChatHeader } from "./chat-header/chat-header";
 import {
   ChatDocumentModel,
@@ -30,12 +31,16 @@ export const ChatPage: FC<ChatPageProps> = (props) => {
   const { data: session } = useSession();
 
   useEffect(() => {
-    chatStore.initChatSession({
-      chatThread: props.chatThread,
-      messages: props.messages,
-      userName: session?.user?.name!,
-    });
-  }, [props.messages, session?.user?.name, props.chatThread]);
+    // Only initialize if the chat thread ID changed (prevent re-init during streaming)
+    if (chatStore.chatThreadId !== props.chatThread.id) {
+      console.log('🔄 Initializing chat session for thread:', props.chatThread.id);
+      chatStore.initChatSession({
+        chatThread: props.chatThread,
+        messages: props.messages,
+        userName: session?.user?.name!,
+      });
+    }
+  }, [props.chatThread.id, session?.user?.name]);
 
   const { messages, loading } = useChat();
 
@@ -67,21 +72,36 @@ export const ChatPage: FC<ChatPageProps> = (props) => {
       )}
       <ChatMessageContainer ref={current}>
         <ChatMessageContentArea>
-          {messages.map((message) => {
-            return (
-              <ChatMessageArea
-                key={message.id}
-                profileName={message.name}
-                role={message.role}
-                onCopy={() => {
-                  navigator.clipboard.writeText(message.content);
-                }}
-                profilePicture={session?.user?.image}
-              >
-                <MessageContent message={message} />
-              </ChatMessageArea>
-            );
-          })}
+          {messages
+            .filter((message) => {
+              // TEMPORARY: Show ALL messages for debugging
+              console.log('Message filter:', {
+                role: message.role,
+                name: message.name,
+                hiddenToolResult: message.hiddenToolResult,
+                isProgressMessage: message.isProgressMessage,
+                contentPreview: typeof message.content === 'string' ? message.content.substring(0, 100) : 'object'
+              });
+              return true; // Show everything
+            })
+            .map((message) => {
+              return (
+                <ChatMessageArea
+                  key={message.id}
+                  profileName={message.name}
+                  role={message.role}
+                  onCopy={() => {
+                    navigator.clipboard.writeText(message.content);
+                  }}
+                  profilePicture={session?.user?.image}
+                >
+                  <MessageContent 
+                    message={message} 
+                    isAdmin={session?.user?.isAdmin || false}
+                  />
+                </ChatMessageArea>
+              );
+            })}
           {loading === "loading" && <ChatLoading />}
         </ChatMessageContentArea>
       </ChatMessageContainer>

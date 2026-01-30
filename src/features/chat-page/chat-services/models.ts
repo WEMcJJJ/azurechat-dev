@@ -16,6 +16,11 @@ export interface ChatMessageModel {
   role: ChatRole;
   name: string;
   multiModalImage?: string;
+  tool_calls?: any[]; // Store tool invocations from assistant messages (OpenAI format)
+  tool_call_id?: string; // Store tool_call_id for tool role messages
+  hiddenToolResult?: boolean; // Flag to hide tool results from UI (e.g., image tool outputs)
+  isProgressMessage?: boolean; // Flag to mark ephemeral progress notifications (auto-removed on completion)
+  progressFailed?: boolean; // Flag to indicate progress message represents a failed operation
   type: typeof MESSAGE_ATTRIBUTE;
 }
 

@@ -1,6 +1,18 @@
 # Release Notes
 
-## [v2.0.1] - 2025-12-0
+## [v2.0.3] - 2026-01-28
+
+- Changed: Replaced gpt-image-1-mini wiht gpt-image-1.5
+- Changed: GPT-5.2 model is now used.
+
+## [v2.0.2] - 2025-12-12
+
+- Changed: Replaced DALL-E 3 with gpt-image-1-mini - DALL-E 3 will be deprecated and unavailable in February 2026
+- Added: Lightbox for images
+- Changed: Switched from Okta to Entra for authentication
+- Changed: Improved document handling for chats
+
+## [v2.0.1] - 2025-12-05
 
 - Fixed: Packages updated to current versions
 

@@ -21,15 +21,29 @@ export default function RootLayout({
 }) {
   noStore();
   const instrumentationKey = process.env.APPINSIGHTS_INSTRUMENTATIONKEY || "";
+  
+  // Only use Application Insights in production
+  const shouldUseAppInsights = process.env.NODE_ENV === 'production' && instrumentationKey;
+  
   return (
     <AuthenticatedProviders>
-      <ApplicationInsightsProvider instrumentationKey={instrumentationKey}>
-        <div className={cn("flex flex-1 items-stretch")}>
-          <MainMenu />
-          <div className="flex-1 flex">{children}</div>
-        </div>
-        <InfoModal/>
-      </ApplicationInsightsProvider>
+      {shouldUseAppInsights ? (
+        <ApplicationInsightsProvider instrumentationKey={instrumentationKey}>
+          <div className={cn("flex flex-1 items-stretch")}>
+            <MainMenu />
+            <div className="flex-1 flex">{children}</div>
+          </div>
+          <InfoModal/>
+        </ApplicationInsightsProvider>
+      ) : (
+        <>
+          <div className={cn("flex flex-1 items-stretch")}>
+            <MainMenu />
+            <div className="flex-1 flex">{children}</div>
+          </div>
+          <InfoModal/>
+        </>
+      )}
     </AuthenticatedProviders>
   );
 }
