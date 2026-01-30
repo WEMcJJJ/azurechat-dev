@@ -25,7 +25,7 @@ export const ChatMenu: FC<ChatMenuProps> = (props) => {
                 href={`/chat/${item.id}`}
                 chatThread={item}
               >
-                <p className="break-all">{item.name.replace("\n", "")}</p>
+                <p className="break-all">{(item.name || "Untitled Chat").replace("\n", "")}</p>
               </ChatMenuItem>
             ))}
           </ChatGroup>

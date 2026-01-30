@@ -2,12 +2,6 @@ import { RequestOptions } from "https";
 
 export function register() {
   if (process.env.NEXT_RUNTIME === 'nodejs') {
-    // Only initialize Azure Monitor in production and when connection string is available
-    if (process.env.NODE_ENV !== 'production' || !process.env.APPLICATIONINSIGHTS_CONNECTION_STRING) {
-      console.log('Azure Monitor telemetry disabled in development environment');
-      return;
-    }
-
     const { useAzureMonitor } = require("@azure/monitor-opentelemetry");
     const { metrics } = require('@opentelemetry/api');
     const { SpanEnrichingProcessor } = require('./span-enriching-processor');

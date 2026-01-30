@@ -1,0 +1,50 @@
+# Exclude files and folders from Copilot Chat context & suggestions.
+# Keep Copilot focused on source code, configs, and docs.
+
+# Node & build artifacts
+node_modules/
+.next/
+out/
+dist/
+build/
+coverage/
+*.log
+
+# Environment & secrets
+.env
+.env.*
+*.env
+**/.env.local
+**/.envrc
+*.pem
+*.key
+
+# Binary & large assets
+**/*.png
+**/*.jpg
+**/*.jpeg
+**/*.gif
+**/*.webp
+**/*.pdf
+**/*.zip
+**/*.gz
+**/*.tgz
+**/*.mp4
+**/*.mp3
+
+# Local caches
+.vscode/**/history/
+.vscode-test/
+.yarn/*
+.pnp.*
+
+# Generated docs/previews
+public/generated/**
+docs/screenshots/**
+docs/_site/**
+static/**
+
+# Data dumps
+dump/**
+exports/**
+backups/**

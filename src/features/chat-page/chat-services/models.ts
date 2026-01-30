@@ -23,7 +23,7 @@ export type ChatRole = "system" | "user" | "assistant" | "function" | "tool";
 
 export interface ChatThreadModel {
   id: string;
-  name: string;
+  name?: string;
   createdAt: Date;
   lastMessageAt: Date;
   userId: string;

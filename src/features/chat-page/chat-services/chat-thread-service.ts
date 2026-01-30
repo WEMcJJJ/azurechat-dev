@@ -53,9 +53,16 @@ export const FindAllChatThreadForCurrentUser = async (): Promise<
         partitionKey: await userHashedId(),
       })
       .fetchAll();
+    
+    // Ensure all threads have a name property for backward compatibility
+    const validatedResources = resources.map(thread => ({
+      ...thread,
+      name: thread.name || "Untitled Chat"
+    }));
+    
     return {
       status: "OK",
-      response: resources,
+      response: validatedResources,
     };
   } catch (error) {
     return {

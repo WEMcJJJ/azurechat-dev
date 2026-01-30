@@ -18,7 +18,7 @@ const ChatThreadRow: React.FC<ChatThreadRowProps> = (props) => {
         router.push("/reporting/chat/" + chatThread.id);
       }}
     >
-      <TableCell className="font-medium">{chatThread.name}</TableCell>
+      <TableCell className="font-medium">{chatThread.name || "Untitled Chat"}</TableCell>
       <TableCell>{chatThread.useName}</TableCell>
       <TableCell>
         {new Date(chatThread.createdAt).toLocaleDateString()}

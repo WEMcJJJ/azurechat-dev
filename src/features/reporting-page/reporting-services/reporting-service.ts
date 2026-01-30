@@ -45,9 +45,16 @@ export const FindAllChatThreadsForAdmin = async (
     const { resources } = await HistoryContainer()
       .items.query<ChatThreadModel>(querySpec)
       .fetchAll();
+    
+    // Ensure all threads have a name property for backward compatibility
+    const validatedResources = resources.map(thread => ({
+      ...thread,
+      name: thread.name || "Untitled Chat"
+    }));
+    
     return {
       status: "OK",
-      response: resources,
+      response: validatedResources,
     };
   } catch (error) {
     return {
