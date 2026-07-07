@@ -30,12 +30,15 @@ export const ChatPage: FC<ChatPageProps> = (props) => {
   const { data: session } = useSession();
 
   useEffect(() => {
-    chatStore.initChatSession({
-      chatThread: props.chatThread,
-      messages: props.messages,
-      userName: session?.user?.name!,
-    });
-  }, [props.messages, session?.user?.name, props.chatThread]);
+    // Only initialize if the chat thread ID changed (prevent re-init during streaming)
+    if (chatStore.chatThreadId !== props.chatThread.id) {
+      chatStore.initChatSession({
+        chatThread: props.chatThread,
+        messages: props.messages,
+        userName: session?.user?.name!,
+      });
+    }
+  }, [props.chatThread.id, session?.user?.name]);
 
   const { messages, loading } = useChat();
 
@@ -67,21 +70,34 @@ export const ChatPage: FC<ChatPageProps> = (props) => {
       )}
       <ChatMessageContainer ref={current}>
         <ChatMessageContentArea>
-          {messages.map((message) => {
-            return (
-              <ChatMessageArea
-                key={message.id}
-                profileName={message.name}
-                role={message.role}
-                onCopy={() => {
-                  navigator.clipboard.writeText(message.content);
-                }}
-                profilePicture={session?.user?.image}
-              >
-                <MessageContent message={message} />
-              </ChatMessageArea>
-            );
-          })}
+          {messages
+            .filter((message) => {
+              // Filter out system messages (except progress messages which are handled separately)
+              if (message.role === "system" && !message.isProgressMessage) {
+                return false;
+              }
+              
+              // Show all other messages (user, assistant, function calls, tool results)
+              return true;
+            })
+            .map((message) => {
+              return (
+                <ChatMessageArea
+                  key={message.id}
+                  profileName={message.name}
+                  role={message.role}
+                  onCopy={() => {
+                    navigator.clipboard.writeText(message.content);
+                  }}
+                  profilePicture={session?.user?.image}
+                >
+                  <MessageContent 
+                    message={message} 
+                    isAdmin={session?.user?.isAdmin || false}
+                  />
+                </ChatMessageArea>
+              );
+            })}
           {loading === "loading" && <ChatLoading />}
         </ChatMessageContentArea>
       </ChatMessageContainer>

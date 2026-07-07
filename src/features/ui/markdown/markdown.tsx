@@ -3,15 +3,17 @@ import React, { FC } from "react";
 import { Citation } from "./citation";
 import { CodeBlock } from "./code-block";
 import { citationConfig } from "./config";
+import { MarkdownImage } from "./image";
 import { MarkdownProvider } from "./markdown-context";
 import { Paragraph } from "./paragraph";
+import { CitationResult } from "@/features/chat-page/citation/citation-action";
 
 interface Props {
   content: string;
   onCitationClick: (
     previousState: any,
     formData: FormData
-  ) => Promise<JSX.Element>;
+  ) => Promise<CitationResult>;
 }
 
 export const Markdown: FC<Props> = (props) => {
@@ -24,7 +26,7 @@ export const Markdown: FC<Props> = (props) => {
   const WithContext = () => (
     <MarkdownProvider onCitationClick={props.onCitationClick}>
       {Markdoc.renderers.react(content, React, {
-        components: { Citation, Paragraph, CodeBlock },
+        components: { Citation, Paragraph, CodeBlock, MarkdownImage },
       })}
     </MarkdownProvider>
   );

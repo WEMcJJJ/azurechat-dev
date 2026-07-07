@@ -13,11 +13,14 @@ interface MenuLinkProps {
 
 export const MenuLink: FC<MenuLinkProps> = (props) => {
   const path = usePathname();
+  const isActive = path.startsWith(props.href) && props.href !== "/";
   return (
     <Link
       className={cn(
         ButtonLinkVariant,
-        path.startsWith(props.href) && props.href !== "/" ? "text-primary" : ""
+        isActive
+          ? "bg-accent text-wested-blue-medium dark:bg-accent dark:text-primary"
+          : ""
       )}
       href={props.href}
       aria-label={props.ariaLabel}

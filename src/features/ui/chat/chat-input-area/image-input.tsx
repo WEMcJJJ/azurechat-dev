@@ -1,4 +1,4 @@
-import { Image as ImageIcon, X } from "lucide-react";
+import { Image as ImageIcon, X, AlertCircle } from "lucide-react";
 import Image from "next/image";
 import { FC, useRef } from "react";
 import { Button } from "../../button";
@@ -6,7 +6,7 @@ import { InputImageStore, useInputImage } from "./input-image-store";
 import { SupportedFileExtensionsInputImages } from "@/features/chat-page/chat-services/models";
 
 export const ImageInput: FC = () => {
-  const { base64Image, previewImage } = useInputImage();
+  const { base64Image, previewImage, error } = useInputImage();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleButtonClick = () => {
@@ -21,7 +21,13 @@ export const ImageInput: FC = () => {
   };
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 items-center">
+      {error && (
+        <div className="flex items-center gap-1 text-xs text-destructive bg-destructive/10 px-2 py-1 rounded">
+          <AlertCircle size={12} />
+          <span>{error}</span>
+        </div>
+      )}
       {previewImage && (
         <div className="relative overflow-hidden rounded-md w-[35px] h-[35px]">
           <Image src={previewImage} alt="Preview" fill={true} />

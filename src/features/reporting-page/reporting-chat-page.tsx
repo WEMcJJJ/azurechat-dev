@@ -28,9 +28,7 @@ export default function ReportingChatPage(props: ReportingChatPageProps) {
                 onCopy={() => {
                   navigator.clipboard.writeText(message.content);
                 }}
-                profilePicture={
-                  message.role === "assistant" ? "/ai-icon.png" : undefined
-                }
+                profilePicture={undefined}
               >
                 <MessageContent message={message} />
               </ChatMessageArea>

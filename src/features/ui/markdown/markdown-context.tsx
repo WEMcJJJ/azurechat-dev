@@ -1,10 +1,11 @@
 import { FC, PropsWithChildren, createContext, useContext } from "react";
+import { CitationResult } from "@/features/chat-page/citation/citation-action";
 
 interface ContextProps {
   onCitationClick?: (
     previousState: any,
     formData: FormData
-  ) => Promise<JSX.Element>;
+  ) => Promise<CitationResult>;
 }
 
 const Context = createContext<ContextProps | null>(null);
@@ -13,7 +14,7 @@ interface ProviderProps extends PropsWithChildren {
   onCitationClick: (
     previousState: any,
     formData: FormData
-  ) => Promise<JSX.Element>;
+  ) => Promise<CitationResult>;
 }
 
 export const MarkdownProvider: FC<ProviderProps> = (props: ProviderProps) => {

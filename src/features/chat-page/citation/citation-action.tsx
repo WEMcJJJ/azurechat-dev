@@ -1,32 +1,28 @@
 "use server";
 
-import { DisplayError } from "@/features/ui/error/display-error";
-import { RecursiveUI } from "@/features/ui/recursive-ui";
 import { FindCitationByID } from "../chat-services/citation-service";
+
+export interface CitationResult {
+  status: "OK" | "ERROR";
+  content?: any;
+  errors?: Array<{ message: string }>;
+}
 
 export const CitationAction = async (
   previousState: any,
   formData: FormData
-) => {
+): Promise<CitationResult> => {
   const searchResponse = await FindCitationByID(formData.get("id") as string);
 
   if (searchResponse.status !== "OK") {
-    return <DisplayError errors={searchResponse.errors} />;
+    return {
+      status: "ERROR",
+      errors: searchResponse.errors,
+    };
   }
 
-  if (searchResponse.status === "OK") {
-    const document = searchResponse.response;
-
-    return (
-      <div className="flex flex-col gap-4 text-sm max-w-[430px]">
-        <RecursiveUI documentField={document.content} />
-      </div>
-    );
-  }
-
-  return <div>Not found</div>;
+  return {
+    status: "OK",
+    content: searchResponse.response.content,
+  };
 };
-
-interface Prop {
-  documentField: any;
-}

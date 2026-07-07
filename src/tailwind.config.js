@@ -13,7 +13,29 @@ module.exports = {
       screens: {},
     },
     extend: {
+      fontFamily: {
+        sans: [
+          '"Neue Haas Grotesk Text Pro"',
+          'Helvetica',
+          'Arial',
+          'sans-serif',
+        ],
+        display: [
+          '"Neue Haas Grotesk Display Pro"',
+          'Helvetica',
+          'Arial',
+          'sans-serif',
+        ],
+      },
       colors: {
+        /* WestEd Brand Book named colors for direct reference */
+        'wested-blue': '#052054',
+        'wested-purple': '#5C50C3',
+        'wested-green': '#54B948',
+        'wested-blue-medium': '#1669C9',
+        'wested-slate': '#5A799C',
+        'wested-dark-slate': '#3C3675',
+        'wested-navy': '#010010',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

@@ -17,8 +17,7 @@ import {
   BookmarkChatThread,
   DeleteChatThreadByID,
   UpdateChatThreadTitle,
-} from "./chat-menu-service";
-
+} from "./chat-menu-service";import { InputImageStore } from "@/features/ui/chat/chat-input-area/input-image-store";
 interface ChatMenuItemProps {
   href: string;
   chatThread: ChatThreadModel;
@@ -102,6 +101,8 @@ const useDropdownAction = (props: { chatThread: ChatThreadModel }) => {
         if (
           window.confirm("Are you sure you want to delete this chat thread?")
         ) {
+          // Clear image metadata cache for this chat
+          InputImageStore.clearCacheForChat(chatThread.id);
           await DeleteChatThreadByID(chatThread.id);
         }
         break;
