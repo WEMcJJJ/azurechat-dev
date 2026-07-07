@@ -9,7 +9,6 @@ import {
 import { useEffect, useState } from "react";
 import { Avatar, AvatarImage } from "../../avatar";
 import { Button } from "../../button";
-import { AiLogo } from "../../ai-logo";
 
 export const ChatMessageArea = (props: {
   children?: React.ReactNode;
@@ -54,7 +53,6 @@ export const ChatMessageArea = (props: {
       }
       break;
     case "function":
-    case "tool":
       profile = (
         <PocketKnife
           size={28}
@@ -65,7 +63,9 @@ export const ChatMessageArea = (props: {
       break;
     default:
       profile = (
-        <AiLogo height={28} />
+        <Avatar>
+          <AvatarImage src="/ai-icon.png" />
+        </Avatar>
       );
       break;
   }

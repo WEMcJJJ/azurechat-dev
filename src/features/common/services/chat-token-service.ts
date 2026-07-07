@@ -11,7 +11,8 @@ export class ChatTokenService{
             const tiktokenModel = <TiktokenModel>model;
             this.encoder = encodingForModel(tiktokenModel);  // js-tiktoken
         } catch (error) {
-            console.warn("Model fallback: using gpt-4 for token counting");
+            // console.log("Error getting model name from environment variable AZURE_OPENAI_API_DEPLOYMENT_NAME", error);
+            console.log("Model was not parsable from environment variable -> falling back to gpt-4 model for tokencount")
             this.encoder = encodingForModel("gpt-4");  // js-tiktoken
         }
     }

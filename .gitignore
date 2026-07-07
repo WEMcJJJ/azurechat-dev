@@ -63,7 +63,6 @@ docs/model-management.md
 **/debug-image-config/
 **/*route_new.ts
 scripts/*.ps1
-.copilotignore
 
 # Key Vault reference generated snapshots (if any tooling outputs them)
 kv-secrets-export.json

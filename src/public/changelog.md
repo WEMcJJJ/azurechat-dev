@@ -1,18 +1,6 @@
 # Release Notes
 
-## [v2.0.3] - 2026-02-09
-
-- Changed: Replaced DALL-E 3 with gpt-image-1.5
-- Added: Lightbox for images
-- Changed: GPT-5.2 model is now used.
-- Changed: Improved document handling for chats
-
-## [v2.0.2] - 2026-01-09
-
-- Changed: Switched from Okta to Entra for authentication
-- Fixed: Packages updated to current versions
-
-## [v2.0.1] - 2025-12-05
+## [v2.0.1] - 2025-12-0
 
 - Fixed: Packages updated to current versions
 

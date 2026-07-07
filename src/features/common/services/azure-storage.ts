@@ -45,7 +45,7 @@ export const UploadBlob = async (
     };
   }
 
-  // Upload success - no debug logging to avoid leaking info
+  console.log("Upload of generated image was successfull");
 
   return {
     status: "OK",

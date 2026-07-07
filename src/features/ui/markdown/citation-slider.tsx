@@ -9,8 +9,6 @@ import {
 import { FC, useActionState } from "react";
 import { ScrollArea } from "../scroll-area";
 import { useMarkdownContext } from "./markdown-context";
-import { RecursiveUI } from "../recursive-ui";
-import { DisplayError } from "@/features/ui/error/display-error";
 import Loading from "@/app/loading";
 
 interface SliderProps {
@@ -24,7 +22,7 @@ export const CitationSlider: FC<SliderProps> = (props) => {
 
   if (!onCitationClick) throw new Error("onCitationClick is null");
 
-  const [data, formAction, isPending] = useActionState(onCitationClick, null);
+  const [node, formAction, isPending] = useActionState(onCitationClick, null);
 
   return (
     <form>
@@ -46,18 +44,10 @@ export const CitationSlider: FC<SliderProps> = (props) => {
           </SheetHeader>
           <ScrollArea className="flex-1 flex -mx-6">
             {isPending ? (
-              <Loading />
-            ) : data ? (
-              <div className="px-6 whitespace-pre-wrap">
-                {data.status === "ERROR" ? (
-                  <DisplayError errors={data.errors || []} />
-                ) : (
-                  <div className="flex flex-col gap-4 text-sm max-w-[430px]">
-                    <RecursiveUI documentField={data.content} />
-                  </div>
-                )}
-              </div>
-            ) : null}
+              <Loading/>
+            ) : (
+              <div className="px-6 whitespace-pre-wrap">{node}</div>
+            )}
           </ScrollArea>
         </SheetContent>
       </Sheet>

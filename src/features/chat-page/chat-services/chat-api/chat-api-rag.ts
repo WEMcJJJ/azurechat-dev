@@ -3,7 +3,6 @@ import "server-only";
 
 import { userHashedId } from "@/features/auth-page/helpers";
 import { OpenAIInstance } from "@/features/common/services/openai";
-import { RunnableToolFunction } from "openai/lib/RunnableFunction";
 import {
   ChatCompletionStreamingRunner,
   ChatCompletionStreamParams,
@@ -20,15 +19,14 @@ export const ChatApiRAG = async (props: {
   userMessage: string;
   history: ChatCompletionMessageParam[];
   signal: AbortSignal;
-  extensions?: RunnableToolFunction<any>[];
 }): Promise<ChatCompletionStreamingRunner> => {
-  const { chatThread, userMessage, history, signal, extensions = [] } = props;
+  const { chatThread, userMessage, history, signal } = props;
 
   const openAI = OpenAIInstance();
 
   const documentResponse = await SimilaritySearch(
     userMessage,
-    5,
+    10,
     `user eq '${await userHashedId()}' and chatThreadId eq '${chatThread.id}'`
   );
 
@@ -52,72 +50,44 @@ export const ChatApiRAG = async (props: {
       return context;
     })
     .join("\n------\n");
-  
   // Augment the user prompt
-  let _userMessage = "";
-  
-  if (documents.length === 0) {
-    // No relevant documents found - inform user and answer from general knowledge
-    _userMessage = `Note: No directly relevant content found in your uploaded documents for this question. Answering from general knowledge.\n\nQuestion: ${userMessage}`;
-  } else {
-    // Documents found - provide them as supplementary context
-    _userMessage = `\nThe user has uploaded documents to this conversation. Below are relevant excerpts that may help answer their question:\n
+  const _userMessage = `\n
+- Review the following content from documents uploaded by the user and create a final answer.
+- If you don't know the answer, state that you don't know and still try to address the question as best as possible.
+- You must always include a citation at the end of your answer and don't include full stop after the citations.
+- Use the format for your citation {% citation items=[{name:"filename 1",id:"file id"}, {name:"filename 2",id:"file id"}] /%}
 ----------------
-Document Content:
+content: 
 ${content}
 \n
-----------------\n
-Instructions:
-- Use the document content above when it's relevant to the question
-- You can and should also use your general knowledge and reasoning abilities to provide comprehensive answers
-- Feel free to combine information from the documents with your broader knowledge when helpful
-- Include a citation at the end of your answer ONLY when you directly reference content from the uploaded documents
-- Use this format for citations: {% citation items=[{name:"filename",id:"file id"}] /%}
-- For questions that don't relate to the documents, or when using only general knowledge, no citation is needed\n
-Question: ${userMessage}
+---------------- \n
+question: 
+${userMessage}
 `;
-  }
 
-  const messages: ChatCompletionMessageParam[] = [
-    {
-      role: "system",
-      content: chatThread.personaMessage +
-        "\n You also have access to image generation tools (create_img, edit_img) to create or edit images when requested.",
-    },
-    ...history,
-    {
-      role: "user",
-      content: _userMessage,
-    },
-  ];
-
-  let chatTokenService = new ChatTokenService();
-
-  let promptTokens = chatTokenService.getTokenCountFromHistory(messages);
-
-  for (let tokens of promptTokens) {
-    reportPromptTokens(tokens.tokens, "gpt-4", tokens.role, { personaMessageTitle: chatThread.personaMessageTitle, messageCount: messages.length, threadId: chatThread.id });
-  }
-
-  // If extensions are provided, use runTools to enable function calling
-  if (extensions && extensions.length > 0) {
-    return openAI.beta.chat.completions.runTools(
-      {
-        model: "",
-        stream: true,
-        messages: messages,
-        tools: extensions,
-      },
-      { signal }
-    );
-  }
-
-  // No extensions - use standard streaming
   const stream: ChatCompletionStreamParams = {
     model: "",
     stream: true,
-    messages: messages,
+    messages: [
+      {
+        role: "system",
+        content: chatThread.personaMessage,
+      },
+      ...history,
+      {
+        role: "user",
+        content: _userMessage,
+      },
+    ]
   };
+
+  let chatTokenService = new ChatTokenService();
+
+  let promptTokens = chatTokenService.getTokenCountFromHistory(stream.messages);
+
+  for (let tokens of promptTokens) {
+    reportPromptTokens(tokens.tokens, "gpt-4", tokens.role, { personaMessageTitle: chatThread.personaMessageTitle, messageCount: stream.messages.length, threadId: chatThread.id });
+  }
 
   return openAI.beta.chat.completions.stream(stream, { signal });
 };

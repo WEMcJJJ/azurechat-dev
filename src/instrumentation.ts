@@ -44,6 +44,8 @@ export function register() {
       },
     });
 
-    // Avoid logging provider and connection strings in runtime
+    console.log(metrics.getMeterProvider());
+
+    console.log("Application Insights Connection String: ", process.env.APPLICATIONINSIGHTS_CONNECTION_STRING)
   }
 }

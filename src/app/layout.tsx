@@ -2,7 +2,10 @@ import { AI_NAME } from "@/features/theme/theme-config";
 import { ThemeProvider } from "@/features/theme/theme-provider";
 import { Toaster } from "@/features/ui/toaster";
 import { cn } from "@/ui/lib";
+import { Inter } from "next/font/google";
 import "./globals.css";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: AI_NAME,
@@ -19,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full w-full overflow-hidden text-sm">
       <body
-        className={cn("h-full w-full flex  bg-background")}
+        className={cn(inter.className, "h-full w-full flex  bg-background")}
       >
         <ThemeProvider
           attribute="class"

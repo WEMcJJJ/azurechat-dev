@@ -7,7 +7,6 @@ import { AI_DESCRIPTION, AI_NAME } from "@/features/theme/theme-config";
 import { Hero } from "@/features/ui/hero";
 import { ScrollArea } from "@/features/ui/scroll-area";
 import Image from "next/image";
-import { AiLogo } from "@/features/ui/ai-logo";
 import { FC, useState } from "react";
 import { NewsArticleModel } from "@/features/news-page/news-model";
 import { NewsArticle } from "./news-article";
@@ -128,7 +127,13 @@ export const ChatHome: FC<ChatPersonaProps> = ({ personas, news }) => {
         <Hero
           title={
             <>
-              <AiLogo height={48} />{" "}
+              <Image
+                src={"/ai-icon.png"}
+                width={60}
+                height={60}
+                quality={100}
+                alt="ai-icon"
+              />{" "}
               {AI_NAME}
             </>
           }

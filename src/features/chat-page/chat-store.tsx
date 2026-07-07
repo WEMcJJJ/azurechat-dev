@@ -18,7 +18,6 @@ import {
   RemoveExtensionFromChatThread,
   UpdateChatTitle,
 } from "./chat-services/chat-thread-service";
-import { isImageToolResult } from "@/types/image-generation";
 import {
   AzureChatCompletion,
   ChatMessageModel,
@@ -221,16 +220,11 @@ class ChatState {
   }
 
   private createStreamParser(newUserMessage: ChatMessageModel) {
-    let currentFunctionName: string | null = null; // Track function name for tool results
-    
     return createParser((event: ParsedEvent | ReconnectInterval) => {
       if (event.type === "event") {
         const responseType = JSON.parse(event.data) as AzureChatCompletion;
         switch (responseType.type) {
           case "functionCall":
-            // Save the function name for the upcoming result
-            currentFunctionName = responseType.response.name;
-            
             const mappedFunction: ChatMessageModel = {
               id: uniqueId(),
               content: responseType.response.arguments,
@@ -249,7 +243,7 @@ class ChatState {
             const mappedFunctionResult: ChatMessageModel = {
               id: uniqueId(),
               content: responseType.response,
-              name: "tool", // Use "tool" to differentiate from function calls (matches DALL-E 3)
+              name: "tool",
               role: "tool",
               createdAt: new Date(),
               isDeleted: false,
@@ -257,40 +251,10 @@ class ChatState {
               type: "CHAT_MESSAGE",
               userId: "",
               multiModalImage: "",
-              hiddenToolResult: false, // Show tool results
             };
             this.addToMessages(mappedFunctionResult);
-            
-            // Add progress notification for single-image generations
-            try {
-              const parsedResult = JSON.parse(responseType.response);
-              if (isImageToolResult(parsedResult) && parsedResult.urls.length === 1) {
-                const progressMessage: ChatMessageModel = {
-                  id: uniqueId(),
-                  content: `✓ Generated: ${parsedResult.context.prompt}`,
-                  name: "system",
-                  role: "system",
-                  createdAt: new Date(),
-                  isDeleted: false,
-                  threadId: this.chatThreadId,
-                  type: "CHAT_MESSAGE",
-                  userId: "",
-                  multiModalImage: "",
-                  isProgressMessage: true,
-                  progressFailed: false,
-                };
-                this.addToMessages(progressMessage);
-              }
-            } catch {
-              // Not a parseable image result, skip progress message
-            }
             break;
           case "content":
-            // Remove progress messages when assistant starts responding
-            this.messages = this.messages.filter(
-              (msg) => !msg.isProgressMessage
-            );
-            
             const mappedContent: ChatMessageModel = {
               id: responseType.response.id,
               content: responseType.response.choices[0].message.content || "",
@@ -308,32 +272,14 @@ class ChatState {
             this.lastMessage = mappedContent.content;
             break;
           case "abort":
-            // Mark progress messages as failed
-            this.messages.forEach((msg) => {
-              if (msg.isProgressMessage) {
-                msg.progressFailed = true;
-                msg.content = msg.content.replace("✓", "✗");
-              }
-            });
             this.removeMessage(newUserMessage.id);
             this.loading = "idle";
             break;
           case "error":
-            // Mark progress messages as failed
-            this.messages.forEach((msg) => {
-              if (msg.isProgressMessage) {
-                msg.progressFailed = true;
-                msg.content = msg.content.replace("✓", "✗");
-              }
-            });
             showError(responseType.response);
             this.loading = "idle";
             break;
           case "finalContent":
-            // Remove any remaining progress messages on completion
-            this.messages = this.messages.filter(
-              (msg) => !msg.isProgressMessage
-            );
             this.loading = "idle";
             this.completed(this.lastMessage);
             this.updateTitle();
